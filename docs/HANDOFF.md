@@ -23,13 +23,15 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
   - Quadro que se ajusta ao telão: calcula o maior tamanho de letra em que a pergunta inteira cabe (função `fitBoard`/`fitEl`, medição por canvas com Outfit 800).
   - Ampulheta animada (areia, gira a cada vez, balança nos últimos 10 s, tique nos últimos 5 s).
   - Resposta digitada com correção tolerante: ignora acento, hífen, caixa, artigos iniciais; aceita respostas alternativas (`ALIASES`) e erros de digitação por distância de Levenshtein proporcional ao tamanho. Faixa "Quase!" dá uma segunda tentativa.
-  - Errou: campo vermelho, som "béé", passa a vez sem mostrar a resposta.
+  - Errou: campo vermelho, som de erro (`assets/sons/erro.mp3`, embutido em base64 no `index.html`; o "béé" sintetizado fica só de reserva), passa a vez sem mostrar a resposta.
   - Acertou: fanfarra + confete; o resultado aparece na bancada, com o telão inteiro aberto.
   - Respostas que não passaram aparecem no resultado com botão "Aceitar +N" (decisão do grupo).
   - Ficha de dica: 1 por jogador na partida; mostra primeira letra + quantidade de letras para todos, mas a vez continua de quem usou.
   - Reportar problema: ícone de bandeira no topo e link no resultado; motivos + comentário. Hoje grava no banco do artefato do claude.ai (`window.claude.use("db")`) ou, fora dele, no `localStorage` (`revela:reports`).
   - Menu: pular pergunta, encerrar e ver placar.
 - **Final:** pódio animado (2º, 1º, 3º) e lista para 4º e 5º.
+
+- **Testes de melhorias:** ficam em `docs/testes/` (ex.: `melhoria-2-vez.html`, animação da vez, aguardando aprovação). Regra: teste HTML aprovado antes de mexer no `index.html`.
 
 ## 3. Design (DS "Phantom", o mesmo do Duvido!)
 - **Conceito:** telão de auditório. O quadro de palavras é a peça principal; o resto é "bancada", discreto e alinhado a ele.

@@ -5,5 +5,6 @@
 - Deploy: o Claude prepara os arquivos; o Bruno faz `git commit` e `git push` no terminal e cria os projetos no GitHub, Vercel e Supabase.
 - Commits e push sempre pela conta pessoal do GitHub `br1leal` (e-mail `oibrunoleal@gmail.com`), nunca pela conta da GFT. O repositório já tem `user.email` local e o remoto com `br1leal@`.
 - Ler `docs/HANDOFF.md` antes de mexer no código.
+- **Sempre um teste HTML antes de implementar.** Toda melhoria visual ou de interação começa com uma página de teste em `docs/testes/` (ex.: `melhoria-2-vez.html`), usando o CSS real do jogo, com painel para disparar os estados. Só depois que o Bruno aprova o teste é que o `index.html` é alterado. O arquivo de teste também é enviado no chat, para o Bruno abrir direto por lá.
 - Testar no tamanho de computador (1440x860) e de celular (390x844) antes de entregar mudanças visuais.
 - Perguntas novas: conferir os fatos, evitar coisas que mudam rápido (vencedores recentes, "atual", recordes vigentes), nunca usar trecho de letra de música, e cadastrar respostas alternativas (sem acento, apelidos, nomes em inglês).
