@@ -74,6 +74,12 @@ Ordem sugerida, das mais simples às que dependem do Supabase.
     - **nível Família:** a roleta pode girar entre as categorias nostálgicas do próprio nível;
     - pensar se a dificuldade afeta a pontuação (ex.: bônus em pergunta de 4 ou 5 estrelas). Ainda não decidido.
 
+12. **Favicon de bola 8 de sinuca.** Ícone da aba (SVG inline, com versão PNG para iOS/Android depois, junto do PWA). Bola preta com o círculo branco e o "8", no estilo do DS Phantom.
+13. **A palavra 8 como mecânica própria (ideia a lapidar).** Usar o nome do jogo como diferencial. Ideias do Bruno, ainda sem decisão:
+    - **Bônus da 8:** quem acertar a resposta depois que a palavra 8 foi revelada ganha +8 pontos (cria tensão: abrir a 8 ajuda a responder, mas também entrega a pista para todos).
+    - **8 trancada:** a palavra 8 começa bloqueada e só pode ser aberta depois que todos jogaram a primeira rodada da pergunta.
+    - A decidir: o que acontece em perguntas com menos de 8 palavras; se a 8 tem visual próprio no telão (ex.: retângulo com a bola 8); se combina com a pergunta de ouro e o nível Difícil.
+
 Descartados por enquanto: times, aposta.
 Ideias para depois: Modo TV (telão na TV e respostas pelo celular de cada um, precisa de tempo real/servidor), perguntas da casa (criadas pelo grupo).
 
