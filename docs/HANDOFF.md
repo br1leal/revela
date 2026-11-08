@@ -29,7 +29,13 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
   - Ficha de dica: 1 por jogador na partida; mostra primeira letra + quantidade de letras para todos, mas a vez continua de quem usou.
   - Reportar problema: ícone de bandeira no topo e link no resultado; motivos + comentário. Hoje grava no banco do artefato do claude.ai (`window.claude.use("db")`) ou, fora dele, no `localStorage` (`revela:reports`).
   - Menu: pular pergunta, encerrar e ver placar.
-- **Final:** pódio animado (2º, 1º, 3º) e lista para 4º e 5º.
+- **Final:** pódio animado (2º, 1º, 3º) e lista para 4º e 5º; linha do ranking ("Novo líder…" / "chega a N vitórias") e botão "Ver ranking".
+- **Pergunta de ouro:** a última pergunta da partida vale o dobro (`worth()` × 2). Anúncio com moeda no telão (~2 s, toque fecha), telão com borda dourada, retângulos dourados, "vale X" dourado, selo "★ Pergunta de ouro · 2x" no cabeçalho ("★ 2x" no celular) e último segmento da barra contornado em dourado desde o início.
+- **Ranking local:** tela `#s-rank` (botão na home). Por jogador salvo: vitórias, partidas e % de vitórias; líder em rosa (sem líder se empate no topo). Empate no topo = vitória para todos; partida sem pontos não conta; jogador excluído some do ranking; "Zerar ranking" com confirmação (`#o-confirm`). Dados em `revela:matches` = `[{id, at, players:[{id,name,emoji,score}], winners:[id]}]`, pronto para o Supabase.
+- **Modo claro/escuro:** botão sol/lua na home e item no menu da partida; salvo em `revela:theme` (sem escolha, segue o sistema). O telão tem versão clara (lavanda com retângulos brancos), tudo por tokens (`--screen-*`, `--tile-*`, `--gold-*`). Contraste revisado (WCAG AA): botões rosa usam `--pink-btn` (#D6206F) nos dois modos, texto rosa sobre rosa claro usa `--pink-ink`.
+- **Favicon:** bola 8 em SVG inline (o 8 é desenhado, sem depender de fonte).
+- **Pergunta no telão alinhada à esquerda** (não centralizada).
+- **Emojis:** 78 no total (30 originais + 48 mais engraçados).
 
 - **Testes de melhorias:** ficam em `docs/testes/` (ex.: `melhoria-2-vez.html`, animação da vez, aguardando aprovação). Regra: teste HTML aprovado antes de mexer no `index.html`.
 
@@ -43,9 +49,10 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
 
 ## 4. Arquitetura do código (index.html)
 - `THEMES` (temas e perguntas), `LONG`/`EXTRA` (complementos), `ICONS` (ícones SVG para Chaves, Brasil e Pokémon), `ALIASES` (respostas alternativas).
+- Ranking: `getMatches`, `rankTable`, `leaderId`, `saveMatch` (chamado em `finish`), `renderRank`. Tema: `applyTheme`/`toggleTheme` (atributos `data-theme` e `data-mode` no `<html>`). Ouro: `S.gold`, `goldIntro`, `sfx.gold`.
 - Estado em `S`; persistência em `store` (prefixo `revela:` no `localStorage`).
 - Jogadores: elenco/mesa em `R` (`roster`, `table`), funções `renderPlayers`, `renderRoster`, `addPlayer`, `delPlayer`, `openEmoji`, `openEdit`, `tablePlayers`. `S.players` é montado da mesa em `startGame` (cada jogador carrega `id`). Folha nova: `#o-player`. `toast(msg, {label, fn, ms})` aceita botão de ação.
-- Telas: `#s-home`, `#s-players`, `#s-themes`, `#s-game`, `#s-final`; folhas: `#o-emoji`, `#o-player`, `#o-menu`, `#o-report`.
+- Telas: `#s-home`, `#s-players`, `#s-themes`, `#s-game`, `#s-final`, `#s-rank`; folhas: `#o-emoji`, `#o-player`, `#o-menu`, `#o-report`.
 - Funções principais: `buildDeck`, `loadQuestion`, `renderBoard`, `renderHUD`, `reveal`, `nextTurn`, `endQuestion`, `finish`, `judge`/`norm`/`lev`, `hintMask`, `fitBoard`, `confetti`, `sfx`.
 - Fora do claude.ai, `window.claude` não existe: o código já cai para `localStorage` sozinho.
 
@@ -54,15 +61,15 @@ Ordem sugerida, das mais simples às que dependem do Supabase.
 
 1. ~~**Jogadores salvos + exclusão.**~~ Feito (ver seção 2).
 2. **Animação da vez.** Destaque rápido quando a vez passa para o próximo jogador, para ninguém se perder.
-3. **Pergunta de ouro.** A última pergunta da partida vale o dobro.
+3. ~~**Pergunta de ouro.**~~ Feito.
 4. **Chance fora da vez (1 por partida).** Não é roubo: cada jogador tem uma chance na partida de responder fora da sua vez; se acertar, ganha menos pontos (definir quanto, ex.: metade). Precisa de UI para "pedir a vez" sem atrapalhar quem está jogando.
 5. **Temas novos:** Dinossauros; Nostalgia anos 80; Nostalgia anos 90.
 6. **Nível Família.** Para jogar com pais e avós (60 a 70+ anos): brincadeiras antigas, cantores clássicos, craques antigos do futebol, faroeste e outros gêneros de filme antigos, novelas e programas antigos, objetos e costumes de antigamente. No nível Família **não se escolhem temas**: o jogo usa um conjunto próprio de perguntas nostálgicas.
-7. **Ranking / histórico.** Recordes, quem mais venceu, maior pontuação numa pergunta. Começa local e depois vai para o Supabase.
+7. **Ranking / histórico.** *Versão local feita (vitórias, partidas, %). Falta: levar para o Supabase.* Recordes, quem mais venceu, maior pontuação numa pergunta. Começa local e depois vai para o Supabase.
 8. **Narração.** Ler em voz alta a palavra revelada (Web Speech API, `speechSynthesis`, voz pt-BR).
 9. **Responder por fala.** Reconhecimento de voz (`SpeechRecognition`, pt-BR) preenchendo a caixa de resposta. Verificar suporte por navegador e manter a digitação como alternativa.
 
-10. **Modo claro e escuro com botão.** Hoje o jogo segue o tema do sistema (tokens prontos em `:root`, `@media (prefers-color-scheme)` e `[data-theme]`). Falta:
+10. ~~**Modo claro e escuro com botão.**~~ Feito (telão claro próprio). Hoje o jogo segue o tema do sistema (tokens prontos em `:root`, `@media (prefers-color-scheme)` e `[data-theme]`). Falta:
     - um botão de alternar (sol/lua) visível na tela inicial e no menu da partida, salvo no `localStorage`;
     - uma revisão visual completa do modo claro em todas as telas (home, jogadores, temas, partida, resultado, final, folhas). Decidir se o telão continua escuro no modo claro (como painel de TV) ou ganha uma versão clara própria;
     - conferir contraste (WCAG AA) nos dois modos.
@@ -76,7 +83,7 @@ Ordem sugerida, das mais simples às que dependem do Supabase.
     - **nível Família:** a roleta pode girar entre as categorias nostálgicas do próprio nível;
     - pensar se a dificuldade afeta a pontuação (ex.: bônus em pergunta de 4 ou 5 estrelas). Ainda não decidido.
 
-12. **Favicon de bola 8 de sinuca.** Ícone da aba (SVG inline, com versão PNG para iOS/Android depois, junto do PWA). Bola preta com o círculo branco e o "8", no estilo do DS Phantom.
+12. ~~**Favicon de bola 8 de sinuca.**~~ Feito (PNG para iOS/Android fica para o PWA). Ícone da aba (SVG inline, com versão PNG para iOS/Android depois, junto do PWA). Bola preta com o círculo branco e o "8", no estilo do DS Phantom.
 13. **A palavra 8 como mecânica própria (ideia a lapidar).** Usar o nome do jogo como diferencial. Ideias do Bruno, ainda sem decisão:
     - **Bônus da 8:** quem acertar a resposta depois que a palavra 8 foi revelada ganha +8 pontos (cria tensão: abrir a 8 ajuda a responder, mas também entrega a pista para todos).
     - **8 trancada:** a palavra 8 começa bloqueada e só pode ser aberta depois que todos jogaram a primeira rodada da pergunta.
