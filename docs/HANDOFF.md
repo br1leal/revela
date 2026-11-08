@@ -23,13 +23,14 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
   - Quadro que se ajusta ao telão: calcula o maior tamanho de letra em que a pergunta inteira cabe (função `fitBoard`/`fitEl`, medição por canvas com Outfit 800).
   - Ampulheta animada (areia, gira a cada vez, balança nos últimos 10 s, tique nos últimos 5 s).
   - Resposta digitada com correção tolerante: ignora acento, hífen, caixa, artigos iniciais; aceita respostas alternativas (`ALIASES`) e erros de digitação por distância de Levenshtein proporcional ao tamanho. Faixa "Quase!" dá uma segunda tentativa.
-  - Errou: campo vermelho, som de erro (`assets/sons/erro.mp3`, embutido em base64 no `index.html`; o "béé" sintetizado fica só de reserva), passa a vez sem mostrar a resposta.
+  - Errou: campo vermelho, som de erro (`assets/sons/erro.mp3`, embutido em base64 no `index.html` e tocado pelo Web Audio via `decodeAudioData`; reserva: `<audio>`; o "béé" sintetizado não é mais usado), passa a vez sem mostrar a resposta.
   - Acertou: fanfarra + confete; o resultado aparece na bancada, com o telão inteiro aberto.
   - Respostas que não passaram aparecem no resultado com botão "Aceitar +N" (decisão do grupo).
   - Ficha de dica: 1 por jogador na partida; mostra primeira letra + quantidade de letras para todos, mas a vez continua de quem usou.
   - Reportar problema: ícone de bandeira no topo e link no resultado; motivos + comentário. Hoje grava no banco do artefato do claude.ai (`window.claude.use("db")`) ou, fora dele, no `localStorage` (`revela:reports`).
   - Menu: pular pergunta, encerrar e ver placar.
 - **Final:** pódio animado (2º, 1º, 3º) e lista para 4º e 5º; linha do ranking ("Novo líder…" / "chega a N vitórias") e botão "Ver ranking".
+- **Animação da vez:** discreta, na bancada e no placar. Na bancada o jogador anterior sai para cima e o próximo entra de baixo; por 1,6 s a instrução dá lugar a "Ana passou" / "Ana errou" / "Tempo de Ana acabou" / "Nova pergunta · começa a vez" (os toasts antigos saíram). No placar, um marcador rosa único (`.turn-ind`) desliza até quem está na vez (vertical no computador, sublinhado no celular) e o card cresce 3% e volta (ease-in-out, 0,56 s). Som "plim" curto. O telão não tem mais borda rosa (o rosa fica para quem está na vez). Código: `showTurn`, `moveInd`, `EVT`, `S.turnKey`, `S.pendingEv`, `nextTurn(ev)`, `sfx.turn`.
 - **Pergunta de ouro:** a última pergunta da partida vale o dobro (`worth()` × 2). Anúncio com moeda no telão (~2 s, toque fecha), telão com borda dourada, retângulos dourados, "vale X" dourado, selo "★ Pergunta de ouro · 2x" no cabeçalho ("★ 2x" no celular) e último segmento da barra contornado em dourado desde o início.
 - **Ranking local:** tela `#s-rank` (botão na home). Por jogador salvo: vitórias, partidas e % de vitórias; líder em rosa (sem líder se empate no topo). Empate no topo = vitória para todos; partida sem pontos não conta; jogador excluído some do ranking; "Zerar ranking" com confirmação (`#o-confirm`). Dados em `revela:matches` = `[{id, at, players:[{id,name,emoji,score}], winners:[id]}]`, pronto para o Supabase.
 - **Modo claro/escuro:** botão sol/lua na home e item no menu da partida; salvo em `revela:theme` (sem escolha, segue o sistema). O telão tem versão clara (lavanda com retângulos brancos), tudo por tokens (`--screen-*`, `--tile-*`, `--gold-*`). Contraste revisado (WCAG AA): botões rosa usam `--pink-btn` (#D6206F) nos dois modos, texto rosa sobre rosa claro usa `--pink-ink`.
@@ -37,7 +38,7 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
 - **Pergunta no telão alinhada à esquerda** (não centralizada).
 - **Emojis:** 78 no total (30 originais + 48 mais engraçados).
 
-- **Testes de melhorias:** ficam em `docs/testes/` (ex.: `melhoria-2-vez.html`, animação da vez, aguardando aprovação). Regra: teste HTML aprovado antes de mexer no `index.html`.
+- **Testes de melhorias:** ficam em `docs/testes/` (ex.: `melhoria-2-vez.html`, `teste-3-7-10-12.html`, `teste-avatares.html`). Regra: teste HTML aprovado antes de mexer no `index.html`.
 
 ## 3. Design (DS "Phantom", o mesmo do Duvido!)
 - **Conceito:** telão de auditório. O quadro de palavras é a peça principal; o resto é "bancada", discreto e alinhado a ele.
@@ -60,7 +61,7 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
 Ordem sugerida, das mais simples às que dependem do Supabase.
 
 1. ~~**Jogadores salvos + exclusão.**~~ Feito (ver seção 2).
-2. **Animação da vez.** Destaque rápido quando a vez passa para o próximo jogador, para ninguém se perder.
+2. ~~**Animação da vez.**~~ Feito (ver seção 2).
 3. ~~**Pergunta de ouro.**~~ Feito.
 4. **Chance fora da vez (1 por partida).** Não é roubo: cada jogador tem uma chance na partida de responder fora da sua vez; se acertar, ganha menos pontos (definir quanto, ex.: metade). Precisa de UI para "pedir a vez" sem atrapalhar quem está jogando.
 5. **Temas novos:** Dinossauros; Nostalgia anos 80; Nostalgia anos 90.

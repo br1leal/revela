@@ -291,13 +291,13 @@ p{text-wrap:pretty}
 .pl-tag{font-size:12px;font-weight:600;color:var(--muted);display:flex;gap:6px;align-items:center}
 .pl-s{grid-row:span 2;font-family:var(--serif);font-size:40px;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
 .pl.active{background:var(--pink-soft);box-shadow:0 0 0 1.5px var(--pink) inset}
-.pl.active::before{content:"";position:absolute;left:-1px;top:14px;bottom:14px;width:4px;border-radius:0 3px 3px 0;background:var(--pink)}
+
 .pl.active .pl-tag{color:var(--pink-ink)}
 .pl.bump .pl-s{animation:bump .6s cubic-bezier(.3,1.6,.5,1)}
 @keyframes bump{40%{transform:scale(1.35);color:var(--ok)}}
 
 /* telão */
-.tela{grid-area:tela;min-height:0;background:var(--screen);border-radius:var(--r-xl);box-shadow:var(--shadow-2),0 0 0 2px var(--screen-pink) inset;display:flex;flex-direction:column;padding:clamp(16px,2vw,28px);position:relative;overflow:hidden}
+.tela{grid-area:tela;min-height:0;background:var(--screen);border-radius:var(--r-xl);box-shadow:var(--shadow-2);display:flex;flex-direction:column;padding:clamp(16px,2vw,28px);position:relative;overflow:hidden}
 .tela::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 70% at 50% 0%,var(--screen-glow),transparent 60%)}
 .tela-head{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--screen-muted);font-size:14px;font-weight:600;position:relative;z-index:1}
 .tela-head .worth{color:var(--screen-ink);background:var(--screen-chip);padding:6px 12px;border-radius:10px;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
@@ -390,7 +390,6 @@ p{text-wrap:pretty}
   .pl-tag{display:none}
   .pl-n{font-size:14px;max-width:110px}
   .pl-s{grid-row:auto;font-size:24px}
-  .pl.active::before{display:none}
   .tela{border-radius:22px;padding:14px}
   .bancada{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"turn timer" "form form";border-radius:22px;padding:12px;gap:10px 12px}
   .answer-box{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;grid-template-areas:"input input input" "msg msg msg" "pass answer dica";gap:8px}
@@ -525,6 +524,46 @@ p{text-wrap:pretty}
   .rk .rk-bar{max-width:90px}
 }
 
+/* =========================================================
+   ANIMAÇÃO DA VEZ (melhoria 2)
+   ========================================================= */
+/* bancada: o jogador anterior sai para cima, o próximo entra de baixo */
+.turn{overflow:hidden;padding:4px 0;margin:-4px 0}
+.turn-stack{display:grid;min-width:0;width:100%}
+.turn-inner{grid-area:1/1;display:flex;align-items:center;gap:12px;min-width:0}
+.turn-inner.out{animation:turnOut .26s cubic-bezier(.4,0,1,1) forwards;pointer-events:none}
+.turn-inner.in{animation:turnIn .42s cubic-bezier(.2,.8,.2,1) .06s both}
+.turn-inner.in .avatar{animation:avatarPop .32s cubic-bezier(.215,.61,.355,1) .1s both}
+.turn-inner.in .hint{animation:hintIn .3s ease-out .26s both}
+@keyframes turnOut{45%{opacity:0}to{opacity:0;transform:translateY(-70%)}}
+@keyframes turnIn{from{opacity:0;transform:translateY(70%)}to{opacity:1;transform:none}}
+@keyframes avatarPop{from{transform:scale(.9)}to{transform:scale(1)}}
+@keyframes hintIn{from{opacity:0}to{opacity:1}}
+/* linha de evento ("Ana passou") ocupa o lugar da instrução por ~1,6 s */
+.turn .hint{display:grid}
+.turn .hint>span{grid-area:1/1;transition:opacity .25s,transform .25s}
+.turn .hint .ev{font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.turn .hint .ev i{font-style:normal;display:inline-grid;place-items:center;width:18px;height:18px;border-radius:6px;font-size:11px;font-weight:800;flex:none}
+.turn .hint .ev.pass i{background:var(--surface-3);color:var(--muted)}
+.turn .hint .ev.wrong i{background:var(--bad-soft);color:var(--bad)}
+.turn .hint .ev.time i{background:var(--pink-soft);color:var(--pink-ink)}
+.turn .hint .ev.new i{background:var(--surface-3);color:var(--lav)}
+.turn .hint .tip{opacity:0;transform:translateY(4px)}
+.turn .hint.settled .ev{opacity:0;transform:translateY(-4px)}
+.turn .hint.settled .tip{opacity:1;transform:none}
+/* placar: um marcador único desliza até quem está na vez; o card cresce 3% e volta */
+.rail-list{position:relative}
+.turn-ind{position:absolute;left:-1px;top:0;width:4px;height:0;border-radius:0 3px 3px 0;background:var(--pink);pointer-events:none;z-index:2;transition:transform .45s cubic-bezier(.2,.8,.2,1),height .45s cubic-bezier(.2,.8,.2,1),width .45s cubic-bezier(.2,.8,.2,1),opacity .2s}
+.turn-ind.off{opacity:0}
+.pl{transition:background-color .35s,box-shadow .35s;will-change:transform}
+.pl.turn-in{animation:plGrow .56s cubic-bezier(.645,.045,.355,1) .1s}
+@keyframes plGrow{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+@media (max-width:1000px){
+  .rail-list{padding-bottom:6px}
+  .turn-ind{left:0;top:auto;bottom:0;border-radius:3px}
+}
+@media (prefers-reduced-motion: reduce){ .turn-ind,.turn .hint>span{transition:none} .pl.turn-in{animation:none} }
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -648,10 +687,7 @@ p{text-wrap:pretty}
       </svg>
       <div class="tn" id="t-num">60</div>
     </div>
-    <div class="turn">
-      <div class="avatar" id="t-emoji">😎</div>
-      <div class="who"><div class="name" id="t-name">Jogador</div><div class="hint" id="t-hint"></div></div>
-    </div>
+    <div class="turn" id="turn" aria-live="polite"><div class="turn-stack" id="turn-stack"></div></div>
     <form class="answer-box" id="a-form" autocomplete="off">
       <input id="a-input" type="text" placeholder="Revele uma palavra para responder" enterkeyhint="send" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Sua resposta" disabled>
       <button type="button" class="btn btn-ghost" id="b-pass" disabled>Passo</button>
@@ -1597,6 +1633,7 @@ const sfx = {
   hint(){[880,1175,1568].forEach((f,i)=>tone(f,.16,"sine",.14,i*.08));buzz(25)},
   timeout(){tone(300,.15,"square",.12);tone(220,.3,"square",.12,.16);buzz([80,60,80])},
   click(){tone(520,.05,"triangle",.1)},
+  turn(){tone(988,.22,"sine",.16);tone(1480,.22,"sine",.16,.075);buzz(12)},
   gold(){[784,988,1175,1568].forEach((f,i)=>tone(f,.2,"triangle",.15,i*.07));[1568,2093].forEach((f,i)=>tone(f,.5,"sine",.06,.32+i*.1));buzz([20,30,20])}
 };
 
@@ -1855,7 +1892,7 @@ function startGame(){
   const now=Date.now(); R.table.forEach(id=>{const r=byId(id); if(r) r.lastPlayedAt=now}); saveR();
   S.players.forEach(p=>{p.score=0;p.hint=hintsOn()});
   $("s-game").classList.toggle("hard",hard());
-  S.deck=buildDeck(); S.qi=0;
+  S.deck=buildDeck(); S.qi=0; S.turnKey=null; S.indPos=null;
   show("s-game"); loadQuestion();
 }
 $("start").onclick=()=>{ac();sfx.right();startGame()};
@@ -1870,6 +1907,7 @@ function loadQuestion(){
   S.turn=S.qi%S.players.length;
   S.phase="reveal";
   S.gold=S.deck.length>1&&S.qi===S.deck.length-1;
+  S.pendingEv={type:"new",q:S.qi+1,gold:S.gold};
   $("s-game").classList.toggle("gold",S.gold);
   $("g-theme").classList.remove("unveil");
   $("g-theme").innerHTML=hard()
@@ -1903,16 +1941,18 @@ function renderBoard(justIdx=-1, endAll=false){
 }
 function renderHUD(){
   const prev=S.prevScores||[];
+  const key=S.qi+":"+S.turn, changed=S.turnKey!==key, animate=changed&&S.turnKey!=null;
   $("g-scores").innerHTML=S.players.map((p,i)=>{ const act=i===S.turn&&S.phase!=="end";
-    return `<div class="pl ${act?"active":""} ${prev[i]!=null&&p.score>prev[i]?"bump":""}">
+    return `<div class="pl ${act?"active":""} ${act&&animate?"turn-in":""} ${prev[i]!=null&&p.score>prev[i]?"bump":""}">
       <span class="pl-e">${p.emoji}</span><span class="pl-n">${esc(p.name)}</span><span class="pl-s">${p.score}</span>
       <span class="pl-tag">${act?"<span>Na vez</span>":""}${p.hint?`<span title="Dica disponível">💡 dica</span>`:""}</span>
-    </div>`; }).join("");
+    </div>`; }).join("")+`<span class="turn-ind" id="turn-ind" aria-hidden="true"></span>`;
   S.prevScores=S.players.map(p=>p.score);
+  moveInd(animate);
   const p=S.players[S.turn];
-  $("t-emoji").textContent=p.emoji; $("t-name").textContent=p.name;
   const hint={reveal:"Escolha o número da palavra para revelar",think:"Escreva a resposta ou passe a vez",judge:"Conferindo a resposta"}[S.phase]||"";
-  $("t-hint").textContent=hint;
+  if(changed){ showTurn(p,hint,S.pendingEv,animate); if(animate) sfx.turn(); S.turnKey=key; S.pendingEv=null; }
+  else { const tip=document.querySelector("#turn-stack .turn-inner:last-child .tip"); if(tip) tip.textContent=hint; }
   const thinking=S.phase==="think", inp=$("a-input");
   $("b-pass").disabled=!thinking; $("b-answer").disabled=!thinking; inp.disabled=!thinking;
   if(!thinking){ inp.value=""; msg(""); S.retried=false; inp.classList.remove("wrong","right"); }
@@ -1924,6 +1964,30 @@ function renderHUD(){
   if(thinking && matchMedia("(hover:hover)").matches) setTimeout(()=>inp.focus(),60);
   if(S.phase!=="think"){ $("timer").classList.add("idle"); $("timer").classList.remove("warn"); $("t-num").textContent=S.time; setSand(1); }
   const active=$("g-scores").querySelector(".active"); if(active&&matchMedia("(max-width:1000px)").matches) active.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});
+}
+/* marcador do placar: desliza do jogador anterior para o atual */
+function moveInd(animate){
+  const box=$("g-scores"), act=box.querySelector(".pl.active"), ind=$("turn-ind"); if(!ind) return;
+  if(!act){ ind.classList.add("off"); S.indPos=null; return; }
+  const row=matchMedia("(max-width:1000px)").matches;
+  const to=row?{x:act.offsetLeft,y:0,w:act.offsetWidth,h:3}:{x:0,y:act.offsetTop+14,w:4,h:act.offsetHeight-28};
+  const from=(animate&&S.indPos&&S.indPos.row===row)?S.indPos:to;
+  ind.style.transition="none"; ind.style.transform=`translate(${from.x}px,${from.y}px)`; ind.style.width=from.w+"px"; ind.style.height=from.h+"px";
+  ind.offsetWidth; ind.style.transition="";
+  ind.style.transform=`translate(${to.x}px,${to.y}px)`; ind.style.width=to.w+"px"; ind.style.height=to.h+"px";
+  S.indPos={...to,row};
+}
+addEventListener("resize",()=>{ if($("s-game").classList.contains("on")) moveInd(false); });
+/* bancada: o anterior sai para cima, o novo entra; "Ana passou" aparece por 1,6 s no lugar da instrução */
+const EVT={ pass:e=>`<i>↷</i>${esc(e.name)} passou`, wrong:e=>`<i>✕</i>${esc(e.name)} errou`, time:e=>`<i>⌛</i>Tempo de ${esc(e.name)} acabou`, new:e=>`<i>${e.q}</i>${e.gold?"Pergunta de ouro":"Nova pergunta"} · começa a vez` };
+function showTurn(p,hint,ev,animate){
+  const st=$("turn-stack");
+  st.querySelectorAll(".turn-inner").forEach(el=>{ if(animate){ el.classList.remove("in"); el.classList.add("out"); setTimeout(()=>el.remove(),300); } else el.remove(); });
+  const n=document.createElement("div"); n.className="turn-inner"+(animate?" in":"");
+  const evHTML=ev&&EVT[ev.type]?`<span class="ev ${ev.type}">${EVT[ev.type](ev)}</span>`:"";
+  n.innerHTML=`<div class="avatar">${p.emoji}</div><div class="who"><div class="name">${esc(p.name)}</div><div class="hint ${evHTML?"":"settled"}">${evHTML}<span class="tip">${esc(hint)}</span></div></div>`;
+  st.append(n); $("turn").setAttribute("aria-label",`Vez de ${p.name}`);
+  clearTimeout(S.settleT); if(evHTML) S.settleT=setTimeout(()=>{ const h=n.querySelector(".hint"); if(h) h.classList.add("settled"); },1600);
 }
 function reveal(i){
   if(S.phase!=="reveal"||S.tokens[i].open) return;
@@ -1952,11 +2016,11 @@ function updTimer(){
   setSand(left/(S.time*1000));
   $("timer").classList.toggle("warn",sec<=10);
   if(sec<=5&&sec>0&&sec!==S.lastBeep){S.lastBeep=sec;sfx.tick()}
-  if(left<=0){ stopTimer(); sfx.timeout(); toast("Tempo esgotado!"); nextTurn(); }
+  if(left<=0){ stopTimer(); sfx.timeout(); nextTurn("time"); }
 }
 
 /* ---------- ações ---------- */
-$("b-pass").onclick=()=>{ if(S.phase!=="think")return; stopTimer(); sfx.click(); toast(`${S.players[S.turn].name} passou`); nextTurn(); };
+$("b-pass").onclick=()=>{ if(S.phase!=="think")return; stopTimer(); sfx.click(); nextTurn("pass"); };
 /* ---------- correção da resposta ---------- */
 const LEAD=/^(eu acho que|acho que|e|eh|o|a|os|as|um|uma|the)\s+/;
 function norm(s){
@@ -1998,7 +2062,7 @@ $("a-form").onsubmit=e=>{
   S.phase="wait"; sfx.wrong(); inp.classList.add("wrong"); shake(); msg(`Não é isso, ${p.name}!`,"bad");
   $("b-pass").disabled=$("b-answer").disabled=$("b-hint").disabled=true; inp.readOnly=true;
   const q=S.qi;
-  setTimeout(()=>{ inp.readOnly=false; inp.classList.remove("wrong"); if(S.phase==="wait"&&S.qi===q) nextTurn(); },1200);
+  setTimeout(()=>{ inp.readOnly=false; inp.classList.remove("wrong"); if(S.phase==="wait"&&S.qi===q) nextTurn("wrong"); },1200);
 };
 
 /* ---------- ficha de dica (1 por jogador na partida) ---------- */
@@ -2072,8 +2136,9 @@ $("clear-p").onclick=()=>{
   R.table=[]; saveR(); sfx.click(); renderPlayers(); toast("Mesa limpa. Os salvos continuam aqui");
 }
 
-function nextTurn(){
+function nextTurn(ev){
   if(S.revealed>=S.wordCount){ endQuestion(null); return; }
+  S.pendingEv=ev?{type:ev,name:S.players[S.turn].name}:null;
   S.turn=(S.turn+1)%S.players.length; S.phase="reveal";
   renderBoard(); renderHUD();
 }
