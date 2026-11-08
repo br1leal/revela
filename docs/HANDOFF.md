@@ -30,7 +30,9 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
   - Reportar problema: ícone de bandeira no topo e link no resultado; motivos + comentário. Hoje grava no banco do artefato do claude.ai (`window.claude.use("db")`) ou, fora dele, no `localStorage` (`revela:reports`).
   - Menu: pular pergunta, encerrar e ver placar.
 - **Final:** pódio animado (2º, 1º, 3º) e lista para 4º e 5º; linha do ranking ("Novo líder…" / "chega a N vitórias") e botão "Ver ranking".
-- **Animação da vez:** discreta, na bancada e no placar. Na bancada o jogador anterior sai para cima e o próximo entra de baixo; por 1,6 s a instrução dá lugar a "Ana passou" / "Ana errou" / "Tempo de Ana acabou" / "Nova pergunta · começa a vez" (os toasts antigos saíram). No placar, um marcador rosa único (`.turn-ind`) desliza até quem está na vez (vertical no computador, sublinhado no celular) e o card cresce 3% e volta (ease-in-out, 0,56 s). Som "plim" curto. O telão não tem mais borda rosa (o rosa fica para quem está na vez). Código: `showTurn`, `moveInd`, `EVT`, `S.turnKey`, `S.pendingEv`, `nextTurn(ev)`, `sfx.turn`.
+- **Animação da vez:** discreta, na bancada e no placar. Na bancada o jogador anterior sai para cima e o próximo entra de baixo; por 1,6 s a instrução dá lugar a "Ana passou" / "Ana errou" / "Tempo de Ana acabou" / "Nova pergunta · começa a vez" (os toasts antigos saíram). No placar (só no celular) um sublinhado rosa (`.turn-ind`) desliza até quem está na vez; no computador o card já tem contorno, então não há linha lateral e o card cresce 3% e volta (ease-in-out, 0,56 s). Som "plim" curto. O telão não tem mais borda rosa (o rosa fica para quem está na vez). Código: `showTurn`, `moveInd`, `EVT`, `S.turnKey`, `S.pendingEv`, `nextTurn(ev)`, `sfx.turn`.
+- **Palavra 8 (regra própria do jogo):** a 8ª palavra aparece com uma mini bola 8 no lugar do número. Fica trancada (cadeado, não clicável, nem pelo teclado) até todos jogarem uma vez na pergunta (`S.turnsTaken`); ao liberar, pulsa uma vez. Quem abre a 8 arrisca: acertou na mesma vez = pontos normais +8; errou, passou ou o tempo acabou = ele −8 e cada um dos outros +8 (aviso com a bola 8 no telão). Na pergunta de ouro vira ±16. "Aceitar" no resultado desfaz a punição e dá o bônus. Placar pode ficar negativo. Nos textos fala-se só "a 8" (sem "bola"). Código: `S.eightIdx`, `S.eightBy`, `eightLocked`, `eightPenalty`, `showEightFlash`, `val8`, `BALL8`, `sfx.eight`.
+- **Eu sei! (fora da vez, 1 por partida):** antes de quem está na vez responder (fases de escolher número e de pensar), outro jogador toca no próprio card do placar ("Eu sei!"; no celular, um "!" rosa no chip). Abre a folha `#o-oos`, o tempo da vez pausa, 20 s para escrever, "Quase!" dá 2ª tentativa, "Desistir" não gasta a chance. Acertou = metade dos pontos (arredondado para cima; dobra na de ouro) e encerra a pergunta. Errou ou tempo = −8, chance gasta, a vez continua. Código: `canOOS`, `openOOS`, `oosFail`, `closeOOS`, `p.oos`.
 - **Pergunta de ouro:** a última pergunta da partida vale o dobro (`worth()` × 2). Anúncio com moeda no telão (~2 s, toque fecha), telão com borda dourada, retângulos dourados, "vale X" dourado, selo "★ Pergunta de ouro · 2x" no cabeçalho ("★ 2x" no celular) e último segmento da barra contornado em dourado desde o início.
 - **Ranking local:** tela `#s-rank` (botão na home). Por jogador salvo: vitórias, partidas e % de vitórias; líder em rosa (sem líder se empate no topo). Empate no topo = vitória para todos; partida sem pontos não conta; jogador excluído some do ranking; "Zerar ranking" com confirmação (`#o-confirm`). Dados em `revela:matches` = `[{id, at, players:[{id,name,emoji,score}], winners:[id]}]`, pronto para o Supabase.
 - **Modo claro/escuro:** botão sol/lua na home e item no menu da partida; salvo em `revela:theme` (sem escolha, segue o sistema). O telão tem versão clara (lavanda com retângulos brancos), tudo por tokens (`--screen-*`, `--tile-*`, `--gold-*`). Contraste revisado (WCAG AA): botões rosa usam `--pink-btn` (#D6206F) nos dois modos, texto rosa sobre rosa claro usa `--pink-ink`.
@@ -38,7 +40,7 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
 - **Pergunta no telão alinhada à esquerda** (não centralizada).
 - **Emojis:** 78 no total (30 originais + 48 mais engraçados).
 
-- **Testes de melhorias:** ficam em `docs/testes/` (ex.: `melhoria-2-vez.html`, `teste-3-7-10-12.html`, `teste-avatares.html`). Regra: teste HTML aprovado antes de mexer no `index.html`.
+- **Testes de melhorias:** ficam em `docs/testes/` (ex.: `melhoria-2-vez.html`, `teste-3-7-10-12.html`, `teste-4-13.html`, `teste-avatares.html`). Regra: teste HTML aprovado antes de mexer no `index.html`.
 
 ## 3. Design (DS "Phantom", o mesmo do Duvido!)
 - **Conceito:** telão de auditório. O quadro de palavras é a peça principal; o resto é "bancada", discreto e alinhado a ele.
@@ -63,7 +65,7 @@ Ordem sugerida, das mais simples às que dependem do Supabase.
 1. ~~**Jogadores salvos + exclusão.**~~ Feito (ver seção 2).
 2. ~~**Animação da vez.**~~ Feito (ver seção 2).
 3. ~~**Pergunta de ouro.**~~ Feito.
-4. **Chance fora da vez (1 por partida).** Não é roubo: cada jogador tem uma chance na partida de responder fora da sua vez; se acertar, ganha menos pontos (definir quanto, ex.: metade). Precisa de UI para "pedir a vez" sem atrapalhar quem está jogando.
+4. ~~**Chance fora da vez (1 por partida).**~~ Feito como "Eu sei!" (ver seção 2). Não é roubo: cada jogador tem uma chance na partida de responder fora da sua vez; se acertar, ganha menos pontos (definir quanto, ex.: metade). Precisa de UI para "pedir a vez" sem atrapalhar quem está jogando.
 5. **Temas novos:** Dinossauros; Nostalgia anos 80; Nostalgia anos 90.
 6. **Nível Família.** Para jogar com pais e avós (60 a 70+ anos): brincadeiras antigas, cantores clássicos, craques antigos do futebol, faroeste e outros gêneros de filme antigos, novelas e programas antigos, objetos e costumes de antigamente. No nível Família **não se escolhem temas**: o jogo usa um conjunto próprio de perguntas nostálgicas.
 7. **Ranking / histórico.** *Versão local feita (vitórias, partidas, %). Falta: levar para o Supabase.* Recordes, quem mais venceu, maior pontuação numa pergunta. Começa local e depois vai para o Supabase.
@@ -85,13 +87,13 @@ Ordem sugerida, das mais simples às que dependem do Supabase.
     - pensar se a dificuldade afeta a pontuação (ex.: bônus em pergunta de 4 ou 5 estrelas). Ainda não decidido.
 
 12. ~~**Favicon de bola 8 de sinuca.**~~ Feito (PNG para iOS/Android fica para o PWA). Ícone da aba (SVG inline, com versão PNG para iOS/Android depois, junto do PWA). Bola preta com o círculo branco e o "8", no estilo do DS Phantom.
-13. **A palavra 8 como mecânica própria (ideia a lapidar).** Usar o nome do jogo como diferencial. Ideias do Bruno, ainda sem decisão:
+13. ~~**A palavra 8 como mecânica própria.**~~ Feito (ver seção 2). Ideias originais registradas abaixo. Usar o nome do jogo como diferencial. Ideias do Bruno, ainda sem decisão:
     - **Bônus da 8:** quem acertar a resposta depois que a palavra 8 foi revelada ganha +8 pontos (cria tensão: abrir a 8 ajuda a responder, mas também entrega a pista para todos).
     - **8 trancada:** a palavra 8 começa bloqueada e só pode ser aberta depois que todos jogaram a primeira rodada da pergunta.
     - A decidir: o que acontece em perguntas com menos de 8 palavras; se a 8 tem visual próprio no telão (ex.: retângulo com a bola 8); se combina com a pergunta de ouro e o nível Difícil.
 
 Descartados por enquanto: times, aposta.
-Ideias para depois: Modo TV (telão na TV e respostas pelo celular de cada um, precisa de tempo real/servidor), perguntas da casa (criadas pelo grupo).
+Ideias para depois: **Modo TV / cada um no seu celular** (telão numa tela, cada jogador entra por código de sala no próprio celular, responde e aperta "Eu sei!" por lá; quem apertar primeiro leva). Precisa de tempo real: usar Supabase Realtime quando o Supabase entrar. Perguntas da casa (criadas pelo grupo).
 
 ## 6. Dados e Supabase (a decidir na próxima conversa)
 - Ainda não há schema. Entidades prováveis: jogadores, partidas, pontuação por jogador e partida, reportes de pergunta.

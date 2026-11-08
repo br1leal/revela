@@ -564,6 +564,51 @@ p{text-wrap:pretty}
 }
 @media (prefers-reduced-motion: reduce){ .turn-ind,.turn .hint>span{transition:none} .pl.turn-in{animation:none} }
 
+/* =========================================================
+   BOLA 8 (melhoria 13) e EU SEI! (melhoria 4)
+   ========================================================= */
+.tile .no.no8{display:block;font-size:1em;width:1.15em;height:1.15em}
+.tile .no8 svg{display:block;width:100%;height:100%}
+.tile.eight.locked{cursor:not-allowed;opacity:.55}
+.tile.eight.locked::after{content:"";position:absolute;right:-.28em;top:-.28em;width:.78em;height:.78em;border-radius:50%;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Crect x='5' y='9' width='10' height='7.5' rx='1.6' fill='%235F5585'/%3E%3Cpath d='M7 9V7a3 3 0 0 1 6 0v2' fill='none' stroke='%235F5585' stroke-width='1.8'/%3E%3C/svg%3E") center/70% no-repeat;box-shadow:0 0 0 1.5px var(--line-2)}
+.tile.eight.unlock{animation:unlock .7s cubic-bezier(.645,.045,.355,1)}
+@keyframes unlock{50%{transform:scale(1.08)}}
+.tile.eight.revealed{box-shadow:inset 0 -.13em 0 var(--screen-ink)}
+.eight-flash{position:absolute;left:50%;top:50%;z-index:4;transform:translate(-50%,-50%);display:none;align-items:center;gap:14px;background:var(--surface);color:var(--ink);padding:14px 22px 14px 14px;border-radius:20px;box-shadow:var(--shadow-2),0 0 0 1px var(--line-2) inset;white-space:nowrap}
+.eight-flash.on{display:flex;animation:flashIn .3s ease-out}
+.eight-flash{left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100% - 24px);white-space:normal;transform:translateY(-50%)}
+@media (max-width:1000px){.eight-flash{padding:10px 14px 10px 10px;gap:10px}.eight-flash b{font-size:22px}.eight-flash .ball{width:40px;height:40px}}
+.eight-flash .ball{width:52px;height:52px;flex:none}
+.eight-flash b{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1;display:block}
+.eight-flash span{font-size:14px;font-weight:700;color:var(--muted)}
+.eight-flash .neg{color:var(--bad)} .eight-flash .pos{color:var(--ok)}
+@keyframes flashIn{from{opacity:0;transform:translateY(-44%)}to{opacity:1;transform:translateY(-50%)}}
+/* no computador o card da vez já tem contorno: sem a linha rosa lateral */
+@media (min-width:1001px){.turn-ind{display:none}}
+.pl.drop .pl-s{animation:drop .7s ease-out}
+@keyframes drop{40%{transform:translateY(4px);color:var(--bad)}}
+.pl.can-oos{cursor:pointer}
+.pl.can-oos:hover{box-shadow:0 0 0 1.5px var(--line-2) inset}
+.eusei{height:24px;padding:0 9px;border-radius:7px;background:var(--surface-2);box-shadow:0 0 0 1px var(--line-2) inset;color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.02em}
+.pl.can-oos:hover .eusei{background:var(--pink-btn);color:#fff;box-shadow:none}
+.pl .oos-used{color:var(--faint);text-decoration:line-through}
+.oos-dot{display:none}
+@media (max-width:1000px){
+  .oos-dot{display:grid;position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;place-items:center;background:var(--pink-btn);color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 0 2px var(--bg)}
+  .rail-list{padding-top:8px}
+}
+.oos-rule{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.oos-rule div{border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--muted);background:var(--surface-2)}
+.oos-rule b{display:block;font-family:var(--serif);font-weight:400;font-size:28px;line-height:1;margin-bottom:2px}
+.oos-rule .w b{color:var(--ok)} .oos-rule .l b{color:var(--bad)}
+#oos-input{width:100%;margin-top:14px;height:56px;border:0;border-radius:14px;background:var(--surface-2);box-shadow:0 0 0 1.5px var(--line) inset;padding:0 16px;font-size:18px;font-weight:600}
+#oos-input:focus{outline:none;box-shadow:0 0 0 2px var(--pink) inset}
+#oos-input.wrong{background:var(--bad-soft);color:var(--bad);box-shadow:0 0 0 2px var(--bad) inset}
+.oos-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px;font-weight:600;color:var(--muted);min-height:18px}
+.oos-meta .near{color:var(--pink-ink)} .oos-meta .bad{color:var(--bad)}
+.oos-meta .sec{font-variant-numeric:tabular-nums}
+.oos-meta .sec.warn{color:var(--pink-ink)}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -667,6 +712,7 @@ p{text-wrap:pretty}
   <div class="tela">
     <div class="tela-head"><span id="g-words">0 palavras</span><span class="worth" id="g-worth">vale 0</span></div>
     <div class="board" id="board"></div>
+    <div class="eight-flash" id="eight-flash" role="status"></div>
     <div class="gold-intro" id="gold-intro" role="status"><div class="gi-coin">★</div><b>Pergunta de ouro</b><span>Última pergunta · vale o dobro</span></div>
     <div class="hint-box" id="hint-box" hidden aria-live="polite"><div class="hint-who" id="hint-who"></div><div class="hint-mask" id="hint-mask"></div><div class="hint-info" id="hint-info"></div></div>
   </div>
@@ -771,6 +817,20 @@ p{text-wrap:pretty}
     <button class="btn btn-ghost" id="cf-cancel">Cancelar</button>
     <button class="btn btn-primary" id="cf-ok">Zerar</button>
   </div>
+</div></div>
+
+<div class="overlay" id="o-oos"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="oos-title">
+  <div class="eyebrow">Fora da vez · 1 chance por partida</div>
+  <h2 id="oos-title">Eu sei!</h2>
+  <div class="oos-rule"><div class="w"><b id="oos-win">+0</b>se acertar</div><div class="l"><b>−8</b>se errar</div></div>
+  <form id="oos-form" autocomplete="off">
+    <input id="oos-input" type="text" placeholder="Escreva a resposta" enterkeyhint="send" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Resposta fora da vez">
+    <div class="oos-meta"><span id="oos-msg" aria-live="polite"></span><span class="sec" id="oos-sec">20 s</span></div>
+    <div class="row">
+      <button type="button" class="btn btn-ghost" id="oos-cancel">Desistir</button>
+      <button type="submit" class="btn btn-primary" id="oos-send">Responder</button>
+    </div>
+  </form>
 </div></div>
 
 <div class="overlay" id="o-menu"><div class="sheet" role="dialog" aria-modal="true" aria-label="Menu da partida">
@@ -1633,6 +1693,7 @@ const sfx = {
   hint(){[880,1175,1568].forEach((f,i)=>tone(f,.16,"sine",.14,i*.08));buzz(25)},
   timeout(){tone(300,.15,"square",.12);tone(220,.3,"square",.12,.16);buzz([80,60,80])},
   click(){tone(520,.05,"triangle",.1)},
+  eight(){[392,523,659].forEach((f,i)=>tone(f,.16,"triangle",.14,i*.06));tone(330,.35,"sine",.08,.2);buzz([15,30,15])},
   turn(){tone(988,.22,"sine",.16);tone(1480,.22,"sine",.16,.075);buzz(12)},
   gold(){[784,988,1175,1568].forEach((f,i)=>tone(f,.2,"triangle",.15,i*.07));[1568,2093].forEach((f,i)=>tone(f,.5,"sine",.06,.32+i*.1));buzz([20,30,20])}
 };
@@ -1890,7 +1951,7 @@ function startGame(){
   { const a=ac(); if(a) loadErr(a).catch(()=>{}); }
   S.players=tablePlayers();
   const now=Date.now(); R.table.forEach(id=>{const r=byId(id); if(r) r.lastPlayedAt=now}); saveR();
-  S.players.forEach(p=>{p.score=0;p.hint=hintsOn()});
+  S.players.forEach(p=>{p.score=0;p.hint=hintsOn();p.oos=true});
   $("s-game").classList.toggle("hard",hard());
   S.deck=buildDeck(); S.qi=0; S.turnKey=null; S.indPos=null;
   show("s-game"); loadQuestion();
@@ -1902,7 +1963,9 @@ function loadQuestion(){
   const d=S.deck[S.qi];
   S.tokens=tokenize(d.q);
   S.wordCount=S.tokens.filter(t=>t.word).length;
+  { let c=0; S.eightIdx=S.tokens.findIndex(t=>t.word&&++c===8); }
   S.revealed=0; S.attempts=[]; S.retried=false; S.hintShown=false; $("hint-box").hidden=true;
+  S.turnsTaken=0; S.eightBy=null; S.eightBonus=0; S.winPts=null; S.winTag="";
   closeO("o-result"); $("s-game").classList.remove("show-result");
   S.turn=S.qi%S.players.length;
   S.phase="reveal";
@@ -1926,11 +1989,15 @@ function renderBoard(justIdx=-1, endAll=false){
     if(!t.word) return `<span class="punct">${esc(t.pre+t.post)}</span>`;
     wn++;
     const open=t.open||endAll;
-    const cls=["tile", open?"revealed":"hidden", (!open&&clickable)?"clickable":"", i===justIdx?"just":"", (endAll&&!t.open)?"end-reveal":""].join(" ");
-    const inner=open?esc(t.word):`<span class="no">${wn}</span><span class="bar"></span>`;
-    const attrs=(!open&&clickable)?`role="button" tabindex="0" data-i="${i}" aria-label="Revelar palavra ${wn}"`:`aria-label="${open?esc(t.word):"Palavra escondida"}"`;
+    const is8c=i===S.eightIdx, lk=is8c&&!(t.open||endAll)&&eightLocked();
+    const cls=["tile", open?"revealed":"hidden", (!open&&clickable&&!lk)?"clickable":"", is8c?"eight":"", lk?"locked":"", (is8c&&S.unlockNow&&!lk&&!open)?"unlock":"", i===justIdx?"just":"", (endAll&&!t.open)?"end-reveal":""].join(" ");
+    const is8=i===S.eightIdx, locked=is8&&!open&&eightLocked();
+    const inner=open?esc(t.word):is8?`<span class="no no8" aria-hidden="true">${BALL8}</span><span class="bar"></span>`:`<span class="no">${wn}</span><span class="bar"></span>`;
+    const attrs=lk?`aria-label="Palavra 8. Abre depois que todos jogarem uma vez"`:(!open&&clickable)?`role="button" tabindex="0" data-i="${i}" aria-label="Revelar palavra ${wn}${is8?", a 8":""}"`:`aria-label="${open?esc(t.word):"Palavra escondida"}"`;
     return `<span class="word">${t.pre?`<span class="punct">${esc(t.pre)}</span>`:""}<span class="${cls}" ${attrs}>${inner}</span>${t.post?`<span class="punct">${esc(t.post)}</span>`:""}</span>`;
   }).join("");
+  S.unlockNow=false;
+  $("board").querySelectorAll(".tile.locked").forEach(el=>el.onclick=()=>{ sfx.click(); toast("A 8 abre depois que todos jogarem uma vez"); });
   $("board").querySelectorAll("[data-i]").forEach(el=>{
     el.onclick=()=>reveal(+el.dataset.i);
     el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();reveal(+el.dataset.i)}};
@@ -1943,12 +2010,14 @@ function renderHUD(){
   const prev=S.prevScores||[];
   const key=S.qi+":"+S.turn, changed=S.turnKey!==key, animate=changed&&S.turnKey!=null;
   $("g-scores").innerHTML=S.players.map((p,i)=>{ const act=i===S.turn&&S.phase!=="end";
-    return `<div class="pl ${act?"active":""} ${act&&animate?"turn-in":""} ${prev[i]!=null&&p.score>prev[i]?"bump":""}">
+    const can=canOOS(i);
+    return `<div class="pl ${act?"active":""} ${act&&animate?"turn-in":""} ${prev[i]!=null&&p.score>prev[i]?"bump":""} ${prev[i]!=null&&p.score<prev[i]?"drop":""} ${can?"can-oos":""}" ${can?`data-oos="${i}" role="button" tabindex="0" aria-label="${esc(p.name)}: Eu sei! Responder fora da vez"`:""}>${can?`<span class="oos-dot" aria-hidden="true">!</span>`:""}
       <span class="pl-e">${p.emoji}</span><span class="pl-n">${esc(p.name)}</span><span class="pl-s">${p.score}</span>
-      <span class="pl-tag">${act?"<span>Na vez</span>":""}${p.hint?`<span title="Dica disponível">💡 dica</span>`:""}</span>
+      <span class="pl-tag">${act?"<span>Na vez</span>":""}${p.hint?`<span title="Dica disponível">💡 dica</span>`:""}${can?`<span class="eusei">Eu sei!</span>`:(!act&&p.oos===false?`<span class="oos-used">Eu sei!</span>`:"")}</span>
     </div>`; }).join("")+`<span class="turn-ind" id="turn-ind" aria-hidden="true"></span>`;
   S.prevScores=S.players.map(p=>p.score);
   moveInd(animate);
+  $("g-scores").querySelectorAll("[data-oos]").forEach(el=>{ el.onclick=()=>openOOS(+el.dataset.oos); el.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openOOS(+el.dataset.oos); } }; });
   const p=S.players[S.turn];
   const hint={reveal:"Escolha o número da palavra para revelar",think:"Escreva a resposta ou passe a vez",judge:"Conferindo a resposta"}[S.phase]||"";
   if(changed){ showTurn(p,hint,S.pendingEv,animate); if(animate) sfx.turn(); S.turnKey=key; S.pendingEv=null; }
@@ -1965,6 +2034,46 @@ function renderHUD(){
   if(S.phase!=="think"){ $("timer").classList.add("idle"); $("timer").classList.remove("warn"); $("t-num").textContent=S.time; setSand(1); }
   const active=$("g-scores").querySelector(".active"); if(active&&matchMedia("(max-width:1000px)").matches) active.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});
 }
+/* ================= EU SEI! (fora da vez, 1 por partida) ================= */
+const OOS_SEC=20;
+function canOOS(i){ const p=S.players[i]; return p&&p.oos&&i!==S.turn&&(S.phase==="reveal"||S.phase==="think"); }
+function oosWin(){ return Math.ceil(worth()/2); }
+function openOOS(i){
+  if(!canOOS(i)||document.querySelector(".overlay.on")) return;
+  if(S.tick){ S.pausedLeft=Math.max(0,S.deadline-Date.now()); stopTimer(); } else S.pausedLeft=null;
+  const p=S.players[i]; S.oos={i,retried:false,left:OOS_SEC};
+  $("oos-title").textContent=`${p.emoji} ${p.name} sabe!`; $("oos-win").textContent=`+${oosWin()}`;
+  const inp=$("oos-input"); inp.value=""; inp.classList.remove("wrong"); inp.readOnly=false; $("oos-send").disabled=false; $("oos-cancel").disabled=false;
+  $("oos-msg").textContent=""; $("oos-msg").className="";
+  sfx.hint(); openO("o-oos"); setTimeout(()=>inp.focus(),60);
+  const sec=$("oos-sec"); const draw=()=>{ sec.textContent=`${S.oos.left} s`; sec.classList.toggle("warn",S.oos.left<=5); };
+  draw(); clearInterval(S.oosT); S.oosT=setInterval(()=>{ if(!S.oos) return clearInterval(S.oosT); S.oos.left--; draw(); if(S.oos.left<=5&&S.oos.left>0) sfx.tick(); if(S.oos.left<=0){ clearInterval(S.oosT); oosFail(""); } },1000);
+}
+function closeOOS(resume){
+  clearInterval(S.oosT); closeO("o-oos"); S.oos=null;
+  if(resume&&S.pausedLeft!=null&&S.phase==="think"){ S.deadline=Date.now()+S.pausedLeft; S.tick=setInterval(updTimer,200); updTimer(); }
+  S.pausedLeft=null; renderHUD();
+}
+function oosFail(txt){
+  const o=S.oos; if(!o) return; const p=S.players[o.i];
+  clearInterval(S.oosT); p.oos=false; p.score-=8;
+  if(txt) S.attempts.push({pi:o.i,text:txt,pts:oosWin(),oos:8});
+  const inp=$("oos-input"); inp.classList.add("wrong"); inp.readOnly=true; $("oos-send").disabled=true; $("oos-cancel").disabled=true;
+  $("oos-msg").textContent=txt?`Não é isso, ${p.name}! −8`:`Tempo acabou, ${p.name}! −8`; $("oos-msg").className="bad"; sfx.wrong();
+  setTimeout(()=>closeOOS(true),1300);
+}
+$("oos-form").onsubmit=e=>{
+  e.preventDefault(); const o=S.oos; if(!o) return;
+  const inp=$("oos-input"), txt=inp.value.trim(), p=S.players[o.i]; if(!txt){ inp.focus(); return; }
+  const r=judge(txt,S.deck[S.qi]);
+  if(r==="ok"){ clearInterval(S.oosT); p.oos=false; S.winPts=oosWin(); S.winTag="fora da vez"; p.score+=S.winPts; S.lastGuess=txt; S.eightBy=null;
+    closeO("o-oos"); S.oos=null; S.pausedLeft=null; sfx.win(); confetti(); endQuestion(o.i); return; }
+  if(r==="near"&&!o.retried){ o.retried=true; sfx.tick(); $("oos-msg").textContent="Quase! Confira e envie de novo."; $("oos-msg").className="near"; inp.select(); return; }
+  oosFail(txt);
+};
+$("oos-cancel").onclick=()=>{ sfx.click(); closeOOS(true); };
+$("o-oos").onclick=e=>{ if(e.target.id==="o-oos"&&S.oos&&!$("oos-input").readOnly) closeOOS(true); };
+
 /* marcador do placar: desliza do jogador anterior para o atual */
 function moveInd(animate){
   const box=$("g-scores"), act=box.querySelector(".pl.active"), ind=$("turn-ind"); if(!ind) return;
@@ -1989,10 +2098,29 @@ function showTurn(p,hint,ev,animate){
   st.append(n); $("turn").setAttribute("aria-label",`Vez de ${p.name}`);
   clearTimeout(S.settleT); if(evHTML) S.settleT=setTimeout(()=>{ const h=n.querySelector(".hint"); if(h) h.classList.add("settled"); },1600);
 }
+const BALL8=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#14111d"/><circle cx="32" cy="29.5" r="14.5" fill="#fff"/><g fill="none" stroke="#120C22" stroke-width="3.4"><circle cx="32" cy="24.4" r="4.2"/><circle cx="32" cy="33.9" r="5.3"/></g><ellipse cx="21" cy="14" rx="7" ry="3.4" fill="#fff" opacity=".28" transform="rotate(-32 21 14)"/></svg>`;
+const val8=()=>S.gold?16:8;
+function eightLocked(){ return S.turnsTaken<S.players.length; }
 function reveal(i){
   if(S.phase!=="reveal"||S.tokens[i].open) return;
+  if(i===S.eightIdx&&eightLocked()){ toast("A 8 abre depois que todos jogarem uma vez"); return; }
   S.tokens[i].open=true; S.revealed++; S.phase="think";
+  if(i===S.eightIdx) S.eightBy=S.turn;
   sfx.pop(); renderBoard(i); renderHUD(); startTimer();
+  if(i===S.eightIdx){ sfx.eight(); msg(`Você abriu a 8! Acerte e ganhe +${val8()}. Errar ou passar: você −${val8()} e os outros +${val8()}.`,"near"); }
+}
+/* quem abriu a 8 e não acertou: −8 para ele, +8 para cada um dos outros (dobra na pergunta de ouro) */
+function eightPenalty(){
+  if(S.eightBy===null||S.eightBy!==S.turn) return false;
+  const v=val8(), who=S.players[S.turn];
+  S.players.forEach((p,j)=>{ p.score+= j===S.turn?-v:v; });
+  S.eightBy=null; showEightFlash(`${who.emoji} ${who.name} errou a 8`,`<span class="neg">${who.name} −${v}</span> · <span class="pos">todos os outros +${v}</span>`);
+  return true;
+}
+function showEightFlash(title,sub){
+  const f=$("eight-flash"); clearTimeout(f._t);
+  f.innerHTML=`<span class="ball">${BALL8}</span><div><b>${esc(title)}</b><span>${sub}</span></div>`;
+  f.classList.add("on"); f._t=setTimeout(()=>f.classList.remove("on"),2200);
 }
 
 /* ---------- timer ---------- */
@@ -2016,11 +2144,11 @@ function updTimer(){
   setSand(left/(S.time*1000));
   $("timer").classList.toggle("warn",sec<=10);
   if(sec<=5&&sec>0&&sec!==S.lastBeep){S.lastBeep=sec;sfx.tick()}
-  if(left<=0){ stopTimer(); sfx.timeout(); nextTurn("time"); }
+  if(left<=0){ stopTimer(); sfx.timeout(); if(eightPenalty()){ S.phase="wait"; renderHUD(); setTimeout(()=>nextTurn("time"),900); } else nextTurn("time"); }
 }
 
 /* ---------- ações ---------- */
-$("b-pass").onclick=()=>{ if(S.phase!=="think")return; stopTimer(); sfx.click(); nextTurn("pass"); };
+$("b-pass").onclick=()=>{ if(S.phase!=="think")return; stopTimer(); sfx.click(); if(eightPenalty()){ sfx.wrong(); S.phase="wait"; renderHUD(); setTimeout(()=>nextTurn("pass"),900); } else nextTurn("pass"); };
 /* ---------- correção da resposta ---------- */
 const LEAD=/^(eu acho que|acho que|e|eh|o|a|os|as|um|uma|the)\s+/;
 function norm(s){
@@ -2056,9 +2184,10 @@ $("a-form").onsubmit=e=>{
   const inp=$("a-input"), txt=inp.value.trim(), p=S.players[S.turn], d=S.deck[S.qi];
   if(!txt){ msg("Escreva uma resposta ou toque em Passo","near"); shake(); inp.focus(); return; }
   const r=judge(txt,d);
-  if(r==="ok"){ stopTimer(); p.score+=worth(); S.lastGuess=txt; inp.classList.add("right"); sfx.win(); confetti(); endQuestion(S.turn); return; }
+  if(r==="ok"){ stopTimer(); const b8=S.eightBy===S.turn?val8():0; S.eightBonus=b8; S.winPts=worth()+b8; S.eightBy=null; p.score+=S.winPts; S.lastGuess=txt; inp.classList.add("right"); sfx.win(); confetti(); endQuestion(S.turn); return; }
   if(r==="near"&&!S.retried){ S.retried=true; sfx.tick(); msg("Quase! Confira como escreveu e envie de novo.","near"); shake(); inp.select(); return; }
-  stopTimer(); S.attempts.push({pi:S.turn,text:txt,pts:worth()});
+  stopTimer(); S.attempts.push({pi:S.turn,text:txt,pts:worth(),eight:S.eightBy===S.turn?val8():0});
+  eightPenalty();
   S.phase="wait"; sfx.wrong(); inp.classList.add("wrong"); shake(); msg(`Não é isso, ${p.name}!`,"bad");
   $("b-pass").disabled=$("b-answer").disabled=$("b-hint").disabled=true; inp.readOnly=true;
   const q=S.qi;
@@ -2139,6 +2268,8 @@ $("clear-p").onclick=()=>{
 function nextTurn(ev){
   if(S.revealed>=S.wordCount){ endQuestion(null); return; }
   S.pendingEv=ev?{type:ev,name:S.players[S.turn].name}:null;
+  const wasLocked=eightLocked(); S.turnsTaken++; S.eightBy=null;
+  if(wasLocked&&!eightLocked()&&S.eightIdx>=0&&!S.tokens[S.eightIdx].open) S.unlockNow=true;
   S.turn=(S.turn+1)%S.players.length; S.phase="reveal";
   renderBoard(); renderHUD();
 }
@@ -2148,9 +2279,9 @@ function endQuestion(winner){
   renderBoard(-1,true); renderHUD();
   const d=S.deck[S.qi];
   if(winner!==null){
-    const p=S.players[winner], pts=worth();
-    $("r-kicker").textContent=`${p.emoji} ${p.name} acertou com ${S.revealed} ${S.revealed===1?"palavra aberta":"palavras abertas"}`;
-    $("r-points").textContent=`+${pts} ${pts===1?"ponto":"pontos"}`;
+    const p=S.players[winner], pts=S.winPts!=null?S.winPts:worth();
+    $("r-kicker").textContent=`${p.emoji} ${p.name} acertou${S.winTag?" "+S.winTag:""} com ${S.revealed} ${S.revealed===1?"palavra aberta":"palavras abertas"}`;
+    $("r-points").textContent=`+${pts} ${pts===1?"ponto":"pontos"}${S.eightBonus?` · +${S.eightBonus} da 8`:""}`;
     $("r-points").className="big-points"+(pts>0?"":" zero");
     if(S.gold&&pts>0) $("r-points").textContent+=" · ouro 2x";
   }else{
@@ -2163,8 +2294,10 @@ function endQuestion(winner){
   if(winner!==null) $("r-kicker").textContent+=` escrevendo “${S.lastGuess}”`;
   const box=$("r-attempts");
   box.innerHTML=S.attempts.length?`<div class="lbl">Respostas que não passaram. Se o grupo concordar, dá para aceitar:</div>`+S.attempts.map((a,i)=>{const p=S.players[a.pi];
-    return `<div class="attempt"><span class="e">${p.emoji}</span><span class="txt"><b>${esc(p.name)}</b><br>${esc(a.text)}</span>${a.pts>0?`<button data-acc="${i}">Aceitar +${a.pts}</button>`:""}</div>`}).join(""):"";
-  box.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>{const a=S.attempts[+b.dataset.acc];S.players[a.pi].score+=a.pts;b.disabled=true;b.textContent="Aceita ✓";sfx.pop();renderHUD();});
+    return `<div class="attempt"><span class="e">${p.emoji}</span><span class="txt"><b>${esc(p.name)}</b><br>${esc(a.text)}</span>${a.pts>0?`<button data-acc="${i}">Aceitar +${a.pts+(a.eight?2*a.eight:0)+(a.oos||0)}</button>`:""}</div>`}).join(""):"";
+  box.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>{const a=S.attempts[+b.dataset.acc];S.players[a.pi].score+=a.pts;
+    if(a.eight) S.players.forEach((q,j)=>{ q.score+= j===a.pi?2*a.eight:-a.eight; });
+    if(a.oos) S.players[a.pi].score+=a.oos;b.disabled=true;b.textContent="Aceita ✓";sfx.pop();renderHUD();});
   $("r-next").textContent=S.qi+1>=S.deck.length?"Ver placar final":"Próxima pergunta";
   setTimeout(()=>{ openO("o-result"); $("s-game").classList.add("show-result"); },winner!==null?1100:700);
 }
@@ -2258,6 +2391,7 @@ function revealByNum(){
   const n=+numBuf; numBuf=""; if(!n) return;
   let c=0; const i=S.tokens.findIndex(t=>t.word&&++c===n);
   if(i<0){ toast(`Não existe a palavra ${n}`); return; }
+  if(i===S.eightIdx&&eightLocked()&&!S.tokens[i].open){ toast("A 8 abre depois que todos jogarem uma vez"); return; }
   if(S.tokens[i].open){ toast(`A palavra ${n} já está aberta`); return; }
   reveal(i);
 }
@@ -2267,7 +2401,7 @@ document.addEventListener("keydown",e=>{
   if(/^\d$/.test(e.key)){ numBuf+=e.key; clearTimeout(numT); numT=setTimeout(revealByNum,800); }
   else if(e.key==="Enter"&&numBuf){ e.preventDefault(); clearTimeout(numT); revealByNum(); }
 });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeO("o-emoji"); closeO("o-player"); closeO("o-confirm"); closeO("o-menu"); if($("o-report").classList.contains("on")) closeReport(); } });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeO("o-emoji"); closeO("o-player"); closeO("o-confirm"); closeO("o-menu"); if(S.oos&&!$("oos-input").readOnly) closeOOS(true); if($("o-report").classList.contains("on")) closeReport(); } });
 
 /* ================= QUADRO QUE SE AJUSTA AO TELÃO =================
    Calcula o maior tamanho de letra em que a pergunta inteira cabe
