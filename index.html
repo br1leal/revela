@@ -153,7 +153,6 @@ p{text-wrap:pretty}
 .players{display:grid;gap:10px;max-width:720px}
 .player-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px;background:var(--surface);border-radius:var(--r-lg);padding:8px;box-shadow:var(--shadow-1),0 0 0 1px var(--line) inset;transition:box-shadow .15s}
 .player-row:focus-within{box-shadow:var(--shadow-1),0 0 0 2px var(--pink) inset}
-.player-row .seat{display:none}
 .emoji-btn{width:60px;height:60px;border-radius:12px;background:var(--surface-2);font-size:32px;display:grid;place-items:center;transition:transform .15s}
 .emoji-btn:active{transform:scale(.94)}
 .player-row input{min-width:0;height:56px;border:0;background:transparent;font-family:var(--serif);font-size:30px;line-height:1;padding:0 10px}
@@ -163,6 +162,38 @@ p{text-wrap:pretty}
 .remove:hover{color:var(--bad);background:var(--bad-soft)}
 .add-player{height:76px;border-radius:var(--r-lg);box-shadow:0 0 0 1.5px var(--line-2) inset;color:var(--muted);font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;transition:color .15s,box-shadow .15s}
 .add-player:hover{color:var(--ink);box-shadow:0 0 0 1.5px var(--lav) inset}
+/* mesa (quem joga agora) + elenco (jogadores salvos) */
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:720px;min-height:36px;margin-bottom:10px}
+.sec-title{font-weight:700;font-size:15px}
+.sec-meta{font-size:14px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.sec-head .btn-text{height:36px;margin-right:-10px}
+.sec-head .btn-text[aria-pressed="true"]{color:var(--pink)}
+.roster-sec{margin-top:clamp(28px,5vh,44px)}
+.player-row.seat{grid-template-columns:auto auto minmax(0,1fr) auto}
+.seat-n{width:30px;text-align:center;font-family:var(--serif);font-size:28px;line-height:1;color:var(--faint);font-variant-numeric:tabular-nums}
+.seat-name{min-width:0;font-family:var(--serif);font-size:30px;line-height:1.1;padding:0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.player-row.new{background:transparent;box-shadow:0 0 0 1.5px var(--line-2) inset}
+.player-row.new:focus-within{box-shadow:0 0 0 2px var(--pink) inset}
+.add-btn{height:44px;padding:0 16px;border-radius:12px;background:var(--pink);color:#fff;font-weight:700;font-size:15px;transition:opacity .15s,transform .15s}
+.add-btn:active{transform:scale(.96)}
+.add-btn:disabled{background:var(--surface-2);color:var(--faint);cursor:default}
+.table-note{max-width:720px;font-size:14px;color:var(--muted);padding:2px 4px 0}
+.roster{display:flex;flex-wrap:wrap;gap:10px;max-width:720px}
+.chip{position:relative;display:inline-flex;min-width:0;max-width:100%}
+.chip-main{display:inline-flex;align-items:center;gap:10px;min-width:0;max-width:240px;height:52px;padding:0 18px 0 8px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow-1),0 0 0 1px var(--line) inset;font-weight:600;font-size:16px;transition-property:box-shadow,background-color,transform,opacity;transition-duration:.15s}
+.chip-main .ce{flex:none;width:36px;height:36px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;font-size:21px}
+.chip-main .cn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip-main:hover{box-shadow:var(--shadow-1),0 0 0 1px var(--line-2) inset}
+.chip-main:active{transform:scale(.97)}
+.chip-main[aria-pressed="true"]{background:var(--pink-soft);box-shadow:inset 0 -3px 0 var(--pink),0 0 0 1px var(--pink) inset}
+.chip-main[aria-pressed="true"] .ce{background:transparent}
+.chip-main:disabled{opacity:.38;cursor:default}
+.roster.editing .chip-main{box-shadow:0 0 0 1.5px var(--line-2) inset;background:var(--surface)}
+.chip-x{position:absolute;top:-9px;right:-9px;width:30px;height:30px;border-radius:50%;background:var(--bad);color:#fff;font-size:13px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 3px var(--bg);animation:rise-in .2s ease-out}
+.chip-x:active{transform:scale(.9)}
+.roster-empty{max-width:720px;color:var(--muted);font-size:15px;padding:18px 20px;border-radius:var(--r-lg);box-shadow:0 0 0 1.5px var(--line) inset}
+.pl-name{width:100%;margin-top:16px;height:58px;border:0;border-radius:14px;background:var(--surface-2);box-shadow:0 0 0 1px var(--line) inset;padding:0 16px;font-family:var(--serif);font-size:30px}
+.pl-name:focus{outline:none;box-shadow:0 0 0 2px var(--pink) inset}
 
 /* themes: cards seguem a linguagem dos retângulos do telão */
 .themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));grid-auto-rows:1fr;gap:10px}
@@ -207,7 +238,7 @@ p{text-wrap:pretty}
 .divider{height:1px;background:var(--line)}
 
 @media (max-width:860px){
-  .setup{grid-template-columns:minmax(0,1fr);min-height:auto;padding-bottom:110px}
+  .setup{grid-template-columns:minmax(0,1fr);min-height:auto;padding-bottom:calc(168px + env(safe-area-inset-bottom,0px))}
   .setup-aside{position:static;max-height:none;overflow:visible}
   .setup-main{padding-top:0}
   .aside-actions{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:12px var(--pad) calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 65%,transparent);margin:0}
@@ -409,6 +440,8 @@ p{text-wrap:pretty}
 #rep-note:focus{outline:none;box-shadow:0 0 0 2px var(--pink) inset}
 .toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translateX(-50%) translateY(calc(-100% - 60px));background:var(--ink);color:var(--bg);font-weight:700;padding:12px 20px;border-radius:14px;z-index:80;transition:transform .3s cubic-bezier(.2,.8,.2,1);white-space:nowrap;box-shadow:var(--shadow-2)}
 .toast.on{transform:translateX(-50%) translateY(0)}
+.toast{display:flex;align-items:center;gap:16px}
+.toast button{color:inherit;font-weight:800;padding:2px 0;text-decoration:underline;text-decoration-color:var(--pink);text-decoration-thickness:2px;text-underline-offset:4px}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:70}
 
 @media (prefers-reduced-motion: reduce){
@@ -450,15 +483,20 @@ p{text-wrap:pretty}
       <div class="aside-head">
         <div class="steps-mini"><span class="dot on"></span><span class="dot"></span><span><b>1</b> de 2</span></div>
         <h2 class="display" style="margin-top:14px">Quem vai jogar?</h2>
-        <p class="lede">De 2 a 5 jogadores. Toque no emoji para trocar.</p>
+        <p class="lede">De 2 a 5 jogadores, na ordem das vezes. Toque nos salvos para chamar ou adicione alguém novo.</p>
       </div>
       <div class="aside-actions">
         <button class="btn btn-primary btn-lg" id="go-themes">Escolher temas</button>
-        <button class="btn-text" id="clear-p">Limpar tudo</button>
+        <button class="btn-text" id="clear-p">Limpar mesa</button>
       </div>
     </aside>
     <div class="setup-main">
+      <div class="sec-head"><h3 class="sec-title">Na mesa</h3><span class="sec-meta" id="table-count">0 de 5</span></div>
       <div class="players" id="players"></div>
+      <section class="roster-sec" aria-labelledby="roster-title">
+        <div class="sec-head"><h3 class="sec-title" id="roster-title">Jogadores salvos</h3><button class="btn-text" id="roster-edit" aria-pressed="false">Editar</button></div>
+        <div class="roster" id="roster"></div>
+      </section>
     </div>
   </div>
 </section>
@@ -570,6 +608,17 @@ p{text-wrap:pretty}
 <div class="overlay" id="o-emoji"><div class="sheet" role="dialog" aria-modal="true" aria-label="Escolher emoji">
   <div class="eyebrow">Escolha quem te representa</div>
   <div class="emoji-grid" id="emoji-grid"></div>
+</div></div>
+
+<div class="overlay" id="o-player"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pl-title">
+  <div class="eyebrow">Jogador salvo</div>
+  <h2 id="pl-title">Editar jogador</h2>
+  <input id="pl-name" class="pl-name" maxlength="14" autocomplete="off" aria-label="Nome do jogador">
+  <div class="emoji-grid" id="pl-grid"></div>
+  <div class="row">
+    <button class="btn btn-ghost" id="pl-cancel">Cancelar</button>
+    <button class="btn btn-primary" id="pl-save">Salvar</button>
+  </div>
 </div></div>
 
 <div class="overlay" id="o-menu"><div class="sheet" role="dialog" aria-modal="true" aria-label="Menu da partida">
@@ -1372,7 +1421,7 @@ const store = {
   set(k,v){try{localStorage.setItem("revela:"+k,JSON.stringify(v))}catch(e){}}
 };
 const S = {
-  players: store.get("players",[{name:"",emoji:"😎"},{name:"",emoji:"🦊"}]),
+  players: [],
   themes: new Set(store.get("themes",["gerais","princesas","herois"])),
   random: store.get("random",false),
   hints: store.get("hints",true),
@@ -1427,41 +1476,159 @@ function show(id){
 document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>{sfx.click();show(b.dataset.back)});
 function openO(id){$(id).classList.add("on")}
 function closeO(id){$(id).classList.remove("on")}
-function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),1800)}
+function toast(msg,act){
+  const t=$("toast"); t.textContent=""; const s=document.createElement("span"); s.textContent=msg; t.append(s);
+  if(act){ const b=document.createElement("button"); b.type="button"; b.textContent=act.label;
+    b.onclick=()=>{ clearTimeout(t._h); t.classList.remove("on"); act.fn(); }; t.append(b); }
+  t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),(act&&act.ms)||1800);
+}
 
 $("go-setup").onclick=()=>{ac();sfx.click();renderPlayers();show("s-players")};
 $("go-fs").onclick=()=>{const d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||(()=>{})).call(d)};
 
-/* ================= JOGADORES ================= */
-function renderPlayers(){
-  const box=$("players");
-  box.innerHTML=S.players.map((p,i)=>`
-    <div class="player-row">
-      <button class="emoji-btn" data-emoji="${i}" aria-label="Trocar emoji do jogador ${i+1}">${p.emoji}</button>
-      <input data-name="${i}" value="${esc(p.name)}" maxlength="14" placeholder="Jogador ${i+1}" autocomplete="off" aria-label="Nome do jogador ${i+1}">
-      ${S.players.length>2?`<button class="remove" data-rm="${i}" aria-label="Remover jogador ${i+1}">✕</button>`:""}
-    </div>`).join("")
-    + (S.players.length<5?`<button class="add-player" id="add-p"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Adicionar jogador <span style="color:var(--faint);font-weight:600">${S.players.length} de 5</span></button>`:"");
-  box.querySelectorAll("[data-name]").forEach(inp=>inp.oninput=()=>{S.players[+inp.dataset.name].name=inp.value;store.set("players",S.players)});
-  box.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{S.players.splice(+b.dataset.rm,1);store.set("players",S.players);renderPlayers()});
-  box.querySelectorAll("[data-emoji]").forEach(b=>b.onclick=()=>{S.emojiFor=+b.dataset.emoji;renderEmojiGrid();openO("o-emoji")});
-  const add=$("add-p"); if(add) add.onclick=()=>{
-    const used=S.players.map(p=>p.emoji); const e=EMOJIS.find(x=>!used.includes(x));
-    S.players.push({name:"",emoji:e});store.set("players",S.players);renderPlayers();
-    box.querySelector(`[data-name="${S.players.length-1}"]`).focus();
-  };
-}
-function renderEmojiGrid(){
-  const used=S.players.map((p,i)=>i===S.emojiFor?null:p.emoji);
-  $("emoji-grid").innerHTML=EMOJIS.map(e=>`<button data-e="${e}" aria-pressed="${S.players[S.emojiFor].emoji===e}" ${used.includes(e)?"disabled":""}>${e}</button>`).join("");
-  $("emoji-grid").querySelectorAll("button").forEach(b=>b.onclick=()=>{
-    S.players[S.emojiFor].emoji=b.dataset.e;store.set("players",S.players);sfx.pop();closeO("o-emoji");renderPlayers();
+/* ================= JOGADORES =================
+   Elenco (roster): todos os jogadores salvos neste aparelho, cada um com id fixo.
+     [{id, name, emoji, createdAt, lastPlayedAt}]  · o id vira a chave do jogador no Supabase
+   Mesa (table): ids de quem joga a próxima partida, na ordem das vezes (2 a 5).
+   S.players é montado a partir da mesa quando a partida começa. */
+const MIN_TABLE=2, MAX_TABLE=5;
+const uid=()=>{try{return crypto.randomUUID()}catch(e){return "p-"+Date.now().toString(36)+Math.random().toString(36).slice(2,10)}};
+const nkey=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/\s+/g," ").trim();
+const cleanName=s=>(s||"").trim().replace(/\s+/g," ").slice(0,14);
+const R={roster:store.get("roster",null), table:store.get("table",[]), editing:false, draftName:"", draftEmoji:null, editId:null, editEmoji:null};
+function saveR(){store.set("roster",R.roster);store.set("table",R.table)}
+const byId=id=>R.roster.find(r=>r.id===id);
+const findByName=n=>R.roster.find(r=>nkey(r.name)===nkey(n));
+const freeEmoji=()=>EMOJIS.find(e=>!R.roster.some(r=>r.emoji===e));
+(function migrate(){
+  if(Array.isArray(R.roster)){ R.table=(Array.isArray(R.table)?R.table:[]).filter(id=>byId(id)).slice(0,MAX_TABLE); return; }
+  // formato antigo: revela:players = [{name, emoji}] → vira elenco + mesa
+  R.roster=[]; R.table=[];
+  (store.get("players",[])||[]).forEach(p=>{
+    const name=cleanName(p&&p.name);
+    if(!name||/^jogador \d+$/i.test(name)||findByName(name)) return;
+    const emoji=(p.emoji&&EMOJIS.includes(p.emoji)&&!R.roster.some(r=>r.emoji===p.emoji))?p.emoji:freeEmoji();
+    if(!emoji) return;
+    const r={id:uid(),name,emoji,createdAt:Date.now(),lastPlayedAt:null};
+    R.roster.push(r); if(R.table.length<MAX_TABLE) R.table.push(r.id);
   });
+  saveR();
+})();
+function tablePlayers(){return R.table.map(byId).filter(Boolean).map(r=>({id:r.id,name:r.name,emoji:r.emoji}))}
+const hasDraft=()=>!!cleanName(R.draftName)&&R.table.length<MAX_TABLE&&(R.roster.length<EMOJIS.length||findByName(R.draftName));
+function updateGo(){ $("go-themes").disabled=R.table.length+(hasDraft()?1:0)<MIN_TABLE; }
+
+function renderPlayers(){
+  const box=$("players"), tp=R.table.map(byId).filter(Boolean), full=tp.length>=MAX_TABLE, rosterFull=R.roster.length>=EMOJIS.length;
+  if(!R.draftEmoji||R.roster.some(r=>r.emoji===R.draftEmoji)) R.draftEmoji=freeEmoji()||null;
+  $("table-count").textContent=`${tp.length} de ${MAX_TABLE}`;
+  let note="";
+  if(full) note="Mesa cheia. Tire alguém para chamar outro jogador.";
+  else if(rosterFull) note="Todos os emojis já têm dono. Exclua alguém dos salvos para cadastrar um novo.";
+  box.innerHTML=tp.map((r,i)=>`
+    <div class="player-row seat">
+      <span class="seat-n" aria-hidden="true">${i+1}</span>
+      <button class="emoji-btn" data-emoji="${r.id}" aria-label="Trocar emoji de ${esc(r.name)}">${r.emoji}</button>
+      <span class="seat-name">${esc(r.name)}</span>
+      <button class="remove" data-out="${r.id}" aria-label="Tirar ${esc(r.name)} da mesa">✕</button>
+    </div>`).join("")
+    + (!full&&!rosterFull?`
+    <form class="player-row new" id="new-p" autocomplete="off">
+      <button type="button" class="emoji-btn" id="new-emoji" aria-label="Escolher emoji do novo jogador">${R.draftEmoji}</button>
+      <input id="new-name" maxlength="14" value="${esc(R.draftName)}" placeholder="Novo jogador" aria-label="Nome do novo jogador" enterkeyhint="done">
+      <button type="submit" class="add-btn" id="new-add">Adicionar</button>
+    </form>`:"")
+    + (note?`<p class="table-note">${note}</p>`:"");
+  box.querySelectorAll("[data-out]").forEach(b=>b.onclick=()=>{R.table=R.table.filter(id=>id!==b.dataset.out);saveR();sfx.click();renderPlayers()});
+  box.querySelectorAll("[data-emoji]").forEach(b=>b.onclick=()=>openEmoji(b.dataset.emoji));
+  const f=$("new-p");
+  if(f){
+    const inp=$("new-name"), add=$("new-add");
+    const upd=()=>{R.draftName=inp.value; add.disabled=!cleanName(inp.value); updateGo();};
+    inp.oninput=upd; upd();
+    $("new-emoji").onclick=()=>openEmoji(null);
+    f.onsubmit=e=>{e.preventDefault(); addPlayer(inp.value, true);};
+  }
+  renderRoster(); updateGo();
+}
+function addPlayer(raw, refocus){
+  const name=cleanName(raw); if(!name||R.table.length>=MAX_TABLE) return;
+  const ex=findByName(name);
+  if(ex){
+    if(R.table.includes(ex.id)){ toast(`${ex.name} já está na mesa`); return; }
+    R.table.push(ex.id); toast(`${ex.name} já estava nos salvos e entrou na mesa`);
+  } else {
+    const emoji=R.draftEmoji||freeEmoji(); if(!emoji) return;
+    const r={id:uid(),name,emoji,createdAt:Date.now(),lastPlayedAt:null};
+    R.roster.push(r); R.table.push(r.id); R.draftEmoji=null;
+  }
+  R.draftName=""; saveR(); sfx.pop(); renderPlayers();
+  if(refocus){ const n=$("new-name"); if(n) n.focus(); }
+}
+function renderRoster(){
+  const box=$("roster"), ed=$("roster-edit"), full=R.table.length>=MAX_TABLE;
+  const list=[...R.roster].sort((a,b)=>(b.lastPlayedAt||0)-(a.lastPlayedAt||0)||(b.createdAt||0)-(a.createdAt||0));
+  if(!list.length) R.editing=false;
+  ed.hidden=!list.length; ed.textContent=R.editing?"Concluir":"Editar"; ed.setAttribute("aria-pressed",R.editing);
+  box.classList.toggle("editing",R.editing);
+  box.innerHTML=list.length?list.map(r=>{ const on=R.table.includes(r.id);
+    return `<div class="chip"><button class="chip-main" data-id="${r.id}" ${R.editing?`aria-label="Editar ${esc(r.name)}"`:`aria-pressed="${on}"${!on&&full?" disabled":""}`}><span class="ce">${r.emoji}</span><span class="cn">${esc(r.name)}</span></button>${R.editing?`<button class="chip-x" data-del="${r.id}" aria-label="Excluir ${esc(r.name)}">✕</button>`:""}</div>`;
+  }).join(""):`<p class="roster-empty">Quem você adicionar fica salvo aqui. Na próxima partida, é só tocar para chamar.</p>`;
+  box.querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>{ const id=b.dataset.id;
+    if(R.editing){ openEdit(id); return; }
+    if(R.table.includes(id)) R.table=R.table.filter(x=>x!==id); else if(R.table.length<MAX_TABLE) R.table.push(id);
+    saveR(); sfx.click(); renderPlayers();
+  });
+  box.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>delPlayer(b.dataset.del));
+}
+$("roster-edit").onclick=()=>{R.editing=!R.editing;sfx.click();renderRoster()};
+function delPlayer(id){
+  const ri=R.roster.findIndex(r=>r.id===id); if(ri<0) return;
+  const r=R.roster[ri], ti=R.table.indexOf(id);
+  R.roster.splice(ri,1); if(ti>=0) R.table.splice(ti,1);
+  saveR(); sfx.click(); renderPlayers();
+  toast(`${r.name} saiu dos salvos`,{label:"Desfazer",ms:5000,fn:()=>{
+    if(byId(r.id)) return;
+    if(findByName(r.name)){ toast(`Já existe outro jogador chamado ${r.name}`); return; }
+    if(R.roster.some(x=>x.emoji===r.emoji)){ const e=freeEmoji(); if(!e){ toast("Não há emoji livre para desfazer"); return; } r.emoji=e; }
+    R.roster.splice(Math.min(ri,R.roster.length),0,r);
+    if(ti>=0&&R.table.length<MAX_TABLE) R.table.splice(Math.min(ti,R.table.length),0,r.id);
+    saveR(); sfx.pop(); renderPlayers();
+  }});
+}
+function emojiGrid(el,current,taken,onPick){
+  el.innerHTML=EMOJIS.map(e=>`<button type="button" data-e="${e}" aria-pressed="${e===current}" ${taken.includes(e)?"disabled":""}>${e}</button>`).join("");
+  el.querySelectorAll("button").forEach(b=>b.onclick=()=>onPick(b.dataset.e));
+}
+function openEmoji(id){ // id de um jogador salvo; null = novo jogador
+  const cur=id?byId(id).emoji:R.draftEmoji;
+  emojiGrid($("emoji-grid"),cur,R.roster.filter(r=>r.id!==id).map(r=>r.emoji),e=>{
+    if(id){ byId(id).emoji=e; saveR(); } else R.draftEmoji=e;
+    sfx.pop(); closeO("o-emoji"); renderPlayers();
+  });
+  openO("o-emoji");
 }
 $("o-emoji").onclick=e=>{if(e.target.id==="o-emoji")closeO("o-emoji")};
+function openEdit(id){
+  const r=byId(id); if(!r) return; R.editId=id; R.editEmoji=r.emoji; $("pl-name").value=r.name;
+  const draw=()=>emojiGrid($("pl-grid"),R.editEmoji,R.roster.filter(x=>x.id!==id).map(x=>x.emoji),e=>{R.editEmoji=e;sfx.click();draw()});
+  draw(); openO("o-player");
+}
+function saveEdit(){
+  const r=byId(R.editId); if(!r){ closeO("o-player"); return; }
+  const name=cleanName($("pl-name").value);
+  if(!name){ toast("O nome não pode ficar vazio"); return; }
+  const ex=findByName(name); if(ex&&ex.id!==r.id){ toast(`Já existe ${ex.name} nos salvos`); return; }
+  r.name=name; r.emoji=R.editEmoji; saveR(); sfx.pop(); closeO("o-player"); renderPlayers();
+}
+$("pl-save").onclick=saveEdit;
+$("pl-name").onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); saveEdit(); } };
+$("pl-cancel").onclick=()=>closeO("o-player");
+$("o-player").onclick=e=>{if(e.target.id==="o-player")closeO("o-player")};
 $("go-themes").onclick=()=>{
-  S.players.forEach((p,i)=>{p.name=(p.name||"").trim()||("Jogador "+(i+1))});
-  store.set("players",S.players);sfx.click();renderThemes();show("s-themes");
+  if(hasDraft()) addPlayer(R.draftName,false);
+  if(R.table.length<MIN_TABLE) return;
+  S.players=tablePlayers(); sfx.click(); renderThemes(); show("s-themes");
 };
 
 /* ================= TEMAS / CONFIG ================= */
@@ -1534,6 +1701,8 @@ function tokenize(q){
   });
 }
 function startGame(){
+  S.players=tablePlayers();
+  const now=Date.now(); R.table.forEach(id=>{const r=byId(id); if(r) r.lastPlayedAt=now}); saveR();
   S.players.forEach(p=>{p.score=0;p.hint=hintsOn()});
   $("s-game").classList.toggle("hard",hard());
   S.deck=buildDeck(); S.qi=0;
@@ -1747,10 +1916,8 @@ $("rep-send").onclick=async()=>{
 };
 
 $("clear-p").onclick=()=>{
-  S.players=[{name:"",emoji:"😎"},{name:"",emoji:"🦊"}]; store.set("players",S.players);
-  sfx.click(); renderPlayers(); toast("Lista de jogadores limpa");
-  const first=$("players").querySelector("[data-name]"); if(first) first.focus();
-};
+  R.table=[]; saveR(); sfx.click(); renderPlayers(); toast("Mesa limpa. Os salvos continuam aqui");
+}
 
 function nextTurn(){
   if(S.revealed>=S.wordCount){ endQuestion(null); return; }
@@ -1825,7 +1992,7 @@ document.addEventListener("keydown",e=>{
   if(/^\d$/.test(e.key)){ numBuf+=e.key; clearTimeout(numT); numT=setTimeout(revealByNum,800); }
   else if(e.key==="Enter"&&numBuf){ e.preventDefault(); clearTimeout(numT); revealByNum(); }
 });
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeO("o-emoji"); closeO("o-menu"); if($("o-report").classList.contains("on")) closeReport(); } });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeO("o-emoji"); closeO("o-player"); closeO("o-menu"); if($("o-report").classList.contains("on")) closeReport(); } });
 
 /* ================= QUADRO QUE SE AJUSTA AO TELÃO =================
    Calcula o maior tamanho de letra em que a pergunta inteira cabe

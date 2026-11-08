@@ -10,7 +10,11 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
 
 ## 2. Estado atual (pronto e funcionando)
 - **Arquivo único** `index.html` (HTML + CSS + JS + dados), sem dependências além do Google Fonts.
-- **Jogadores:** 2 a 5, nome e emoji (sem repetir emoji), botão "Limpar tudo". Salvos no `localStorage`.
+- **Jogadores (elenco + mesa):** tela "Quem vai jogar?" com duas partes.
+  - *Na mesa:* quem joga a próxima partida (2 a 5), na ordem das vezes; ✕ tira da mesa; linha "Novo jogador" (emoji + nome) cadastra e já senta na mesa. "Limpar mesa" esvazia só a mesa.
+  - *Jogadores salvos:* chips de todos os jogadores do aparelho (mais recentes primeiro); tocar põe/tira da mesa. "Editar" mostra ✕ para excluir (aviso com "Desfazer" por 5 s) e tocar no chip abre a folha de editar nome/emoji.
+  - Nome único no elenco (sem diferenciar acento/caixa; digitar um nome salvo chama o jogador existente). Emoji fixo por jogador e único no elenco (limite = 30 emojis).
+  - Dados: `revela:roster` = `[{id, name, emoji, createdAt, lastPlayedAt}]` (id UUID fixo, futura chave no Supabase) e `revela:table` = ids da mesa. O formato antigo `revela:players` é migrado sozinho na primeira abertura.
 - **Temas:** 30 temas, 518 perguntas, cada tema com cerca de 1/4 de perguntas longas (20+ palavras). Card "Aleatório" sorteia um tema por pergunta, sem repetir o mesmo tema seguido. O jogo evita repetir perguntas já jogadas até esgotar o tema.
 - **Configurações:** nível (Normal ou Difícil), perguntas por partida (5/8/10/12), tempo (30 s / 1 min / 90 s), dicas on/off, som e vibração.
 - **Nível Difícil:** sem dicas e tema secreto (o header mostra "Tema secreto" e revela o tema quando a pergunta termina).
@@ -38,14 +42,15 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
 ## 4. Arquitetura do código (index.html)
 - `THEMES` (temas e perguntas), `LONG`/`EXTRA` (complementos), `ICONS` (ícones SVG para Chaves, Brasil e Pokémon), `ALIASES` (respostas alternativas).
 - Estado em `S`; persistência em `store` (prefixo `revela:` no `localStorage`).
-- Telas: `#s-home`, `#s-players`, `#s-themes`, `#s-game`, `#s-final`; folhas: `#o-emoji`, `#o-menu`, `#o-report`.
+- Jogadores: elenco/mesa em `R` (`roster`, `table`), funções `renderPlayers`, `renderRoster`, `addPlayer`, `delPlayer`, `openEmoji`, `openEdit`, `tablePlayers`. `S.players` é montado da mesa em `startGame` (cada jogador carrega `id`). Folha nova: `#o-player`. `toast(msg, {label, fn, ms})` aceita botão de ação.
+- Telas: `#s-home`, `#s-players`, `#s-themes`, `#s-game`, `#s-final`; folhas: `#o-emoji`, `#o-player`, `#o-menu`, `#o-report`.
 - Funções principais: `buildDeck`, `loadQuestion`, `renderBoard`, `renderHUD`, `reveal`, `nextTurn`, `endQuestion`, `finish`, `judge`/`norm`/`lev`, `hintMask`, `fitBoard`, `confetti`, `sfx`.
 - Fora do claude.ai, `window.claude` não existe: o código já cai para `localStorage` sozinho.
 
 ## 5. Próximos passos aprovados pelo Bruno
 Ordem sugerida, das mais simples às que dependem do Supabase.
 
-1. **Jogadores salvos + exclusão.** Lista de jogadores já criados para escolher rapidamente quem joga, com opção de excluir. Base para o ranking.
+1. ~~**Jogadores salvos + exclusão.**~~ Feito (ver seção 2).
 2. **Animação da vez.** Destaque rápido quando a vez passa para o próximo jogador, para ninguém se perder.
 3. **Pergunta de ouro.** A última pergunta da partida vale o dobro.
 4. **Chance fora da vez (1 por partida).** Não é roubo: cada jogador tem uma chance na partida de responder fora da sua vez; se acertar, ganha menos pontos (definir quanto, ex.: metade). Precisa de UI para "pedir a vez" sem atrapalhar quem está jogando.
@@ -87,4 +92,5 @@ Ideias para depois: Modo TV (telão na TV e respostas pelo celular de cada um, p
 - `docs/referencias/roleta-ref-2-esteira-horizontal.png`: esteira horizontal com marcador central (inspiração da roleta de tema).
 
 ## 9. Links
+- Produção (Vercel): https://revela-ebon.vercel.app · repositório GitHub `br1leal/revela` (deploy automático a cada push na `main`).
 - Versão publicada no claude.ai: https://claude.ai/artifact/89ExtJgfxEHBw43bnCGzp9
