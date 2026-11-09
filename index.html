@@ -801,6 +801,20 @@ body.in-game .theme-fab{display:none}
 @media (max-width:1000px){ .spin-layer{--sw:112px} .spin-card{--sw:112px;border-radius:16px} .spin-card .se{font-size:30px;height:34px} .spin-card .sn{font-size:11px} .spin-strip{--sgap:10px} }
 @media (prefers-reduced-motion: reduce){ .stars .st.on{animation:none} .spin-card{transition:none} }
 
+/* ações do grupo no topo da partida */
+.g-act{display:inline-flex;align-items:center;gap:7px;height:44px;padding:0 14px 0 11px;border-radius:12px;background:var(--surface-2);box-shadow:0 0 0 1px var(--line) inset;color:var(--ink);font-weight:700;font-size:14px;white-space:nowrap;transition:background-color .15s,color .15s,opacity .15s}
+.g-act svg{width:18px;height:18px;flex:none}
+.g-act:hover{background:var(--surface-3)}
+.g-act:disabled{opacity:.38;cursor:default;background:var(--surface-2)}
+.g-act.confirm{background:var(--bad-soft);color:var(--bad);box-shadow:0 0 0 1.5px var(--bad) inset}
+.only-mobile{display:none}
+@media (max-width:1000px){
+  .g-act{width:44px;padding:0;justify-content:center} .g-act span{display:none}
+  .g-act.confirm{width:auto;padding:0 12px} .g-act.confirm span{display:inline}
+  #b-report{display:none}
+  .only-mobile{display:inline-flex}
+}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -896,6 +910,8 @@ body.in-game .theme-fab{display:none}
     <div class="g-theme" id="g-theme"></div>
     <div class="g-prog"><span class="gold-tag">★ <span class="gt-long">Pergunta de ouro · </span>2x</span><span class="g-level">Difícil</span><div class="segs" id="g-segs" aria-hidden="true"></div><span id="g-count">1/10</span></div>
     <div class="g-tools">
+      <button class="g-act" id="b-newtheme" title="Sortear outro tema (antes de abrir a primeira palavra)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 6.5A6.5 6.5 0 1 0 16.4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 2.8v3.9h-3.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Novo tema</span></button>
+      <button class="g-act" id="b-giveup" title="Ninguém sabe? Mostra a resposta e troca a pergunta"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 10S5 4.2 10 4.2 18.2 10 18.2 10 15 15.8 10 15.8 1.8 10 1.8 10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Desistir</span></button>
       <button class="icon-btn theme-btn" data-theme-toggle aria-label="Alternar modo claro e escuro"><svg class="sun" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 1.8v2.2M10 16v2.2M1.8 10H4M16 10h2.2M4.2 4.2l1.6 1.6M14.2 14.2l1.6 1.6M4.2 15.8l1.6-1.6M14.2 5.8l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
       <button class="icon-btn" id="b-report" aria-label="Reportar problema nesta pergunta" title="Reportar problema nesta pergunta"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M5 17V3.5m0 0h8.5l-1.6 3 1.6 3H5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button class="icon-btn" id="g-menu" aria-label="Menu da partida"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
@@ -1067,7 +1083,7 @@ body.in-game .theme-fab{display:none}
 <div class="overlay" id="o-menu"><div class="sheet" role="dialog" aria-modal="true" aria-label="Menu da partida">
   <h2>Partida em andamento</h2>
   <div class="menu-list">
-    <button class="btn btn-ghost" id="m-skip">Pular esta pergunta</button>
+    <button class="btn btn-ghost only-mobile" id="m-report">Reportar problema nesta pergunta</button>
     <button class="btn btn-ghost" id="m-end">Encerrar e ver placar</button>
     <button class="btn btn-ghost" id="m-help">Como jogar</button>
     <button class="btn btn-primary" id="m-close">Continuar jogando</button>
@@ -2039,7 +2055,7 @@ placeTimer();
       const spin=reduce.matches?0:t*.45;
       let flip=0; if(flipT>=0){ const k=Math.min(1,(t-flipT)/.7); flip=(1-Math.pow(1-k,3))*Math.PI; if(k>=1) flipT=-1; }
       const wob=warn&&!reduce.matches?Math.sin(t*14)*.12:0;
-      G.rotation.set(.18,spin,flip>0&&flip<Math.PI?flip:0); G.rotation.z+=wob;
+      G.rotation.set(.18,spin,flip>0&&flip<Math.PI?flip:0); G.rotation.z+=wob; G.scale.setScalar(1-.3*Math.sin(flip>0&&flip<Math.PI?flip:0));
       // areia
       shown+=(f-shown)*.2; const a=Math.max(.001,shown), b=Math.max(.001,1-shown);
       const h=levelFor(a); if(Math.abs(h-topH)>.004){ topH=h; topSand.geometry.dispose(); topSand.geometry=topGeo(Math.max(.03,h)); } topSand.visible=a>.01;
@@ -2311,7 +2327,7 @@ function startGame(){
   const now=Date.now(); R.table.forEach(id=>{const r=byId(id); if(r) r.lastPlayedAt=now}); saveR();
   S.players.forEach(p=>{p.score=0;p.hint=hintsOn();p.oos=true});
   $("s-game").classList.toggle("hard",hard());
-  S.deck=buildDeck(); S.qi=0; S.turnKey=null; S.indPos=null;
+  S.deck=buildDeck(); S.qi=0; S.giveUp=false; S.turnKey=null; S.indPos=null;
   show("s-game"); loadQuestion();
 }
 $("start").onclick=()=>{ac();sfx.right();startGame()};
@@ -2338,7 +2354,7 @@ function loadQuestion(){
   $("g-segs").innerHTML=S.deck.map((_,i)=>`<i class="${i<S.qi?"done":i===S.qi?"now":""}${S.deck.length>1&&i===S.deck.length-1?" gold":""}"></i>`).join("");
   S.spinning=!!S.spin;
   renderBoard(); renderHUD();
-  playSpin(d,()=>{ S.spinning=false; renderHUD(); if(S.gold) goldIntro(); });
+  playSpin(d,()=>{ S.spinning=false; renderHUD(); syncGroupBtns(); if(S.gold) goldIntro(); });
 }
 function worth(){return (S.wordCount-S.revealed)*(S.gold?2:1)}
 function renderBoard(justIdx=-1, endAll=false){
@@ -2378,6 +2394,7 @@ function renderHUD(){
   moveInd(animate);
   $("g-scores").querySelectorAll("[data-oos]").forEach(el=>{ el.onclick=()=>openOOS(+el.dataset.oos); el.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openOOS(+el.dataset.oos); } }; });
   const p=S.players[S.turn];
+  syncGroupBtns();
   const hint={reveal:"Escolha o número da palavra para revelar",think:"Escreva a resposta ou passe a vez",judge:"Conferindo a resposta"}[S.phase]||"";
   if(changed){ showTurn(p,hint,S.pendingEv,animate); if(animate) sfx.turn(); S.turnKey=key; S.pendingEv=null; }
   else { const tip=document.querySelector("#turn-stack .turn-inner:last-child .tip"); if(tip) tip.textContent=hint; }
@@ -2848,7 +2865,7 @@ function endQuestion(winner){
     $("r-points").className="big-points"+(pts>0?"":" zero");
     if(S.gold&&pts>0) $("r-points").textContent+=" · ouro 2x";
   }else{
-    $("r-kicker").textContent="Ninguém acertou desta vez";
+    $("r-kicker").textContent=S.giveUp?"O grupo desistiu desta":"Ninguém acertou desta vez";
     $("r-points").textContent="Ninguém pontua";
     $("r-points").className="big-points zero";
   }
@@ -2861,7 +2878,7 @@ function endQuestion(winner){
   box.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>{const a=S.attempts[+b.dataset.acc];S.players[a.pi].score+=a.pts;
     if(a.eight) S.players.forEach((q,j)=>{ q.score+= j===a.pi?2*a.eight:-a.eight; });
     if(a.oos) S.players[a.pi].score+=a.oos;b.disabled=true;b.textContent="Aceita ✓";sfx.pop();renderHUD();});
-  $("r-next").textContent=S.qi+1>=S.deck.length?"Ver placar final":"Próxima pergunta";
+  $("r-next").textContent=S.giveUp?"Nova pergunta":S.qi+1>=S.deck.length?"Ver placar final":"Próxima pergunta";
   setTimeout(()=>{ openO("o-result"); $("s-game").classList.add("show-result"); },winner!==null?1100:700);
 }
 function goldIntro(){
@@ -2870,7 +2887,9 @@ function goldIntro(){
   const close=()=>{ clearTimeout(g._t); g.classList.add("off"); setTimeout(()=>g.classList.remove("on","off"),300); };
   g.onclick=close; g._t=setTimeout(close,1900);
 }
-$("r-next").onclick=()=>{ closeO("o-result"); $("s-game").classList.remove("show-result"); sfx.click(); S.qi++; S.qi>=S.deck.length?finish():loadQuestion(); };
+$("r-next").onclick=()=>{ closeO("o-result"); $("s-game").classList.remove("show-result"); sfx.click();
+  if(S.giveUp){ S.giveUp=false; const q=drawQuestion(null); if(q){ S.deck[S.qi]=q; loadQuestion(); return; } }
+  S.qi++; S.qi>=S.deck.length?finish():loadQuestion(); };
 
 /* ---------- menu ---------- */
 $("g-menu").onclick=()=>openO("o-menu");
@@ -2880,7 +2899,7 @@ $("m-help").onclick=()=>{ closeO("o-menu"); if(S.tick){ S.pausedLeft=Math.max(0,
 function closeHelp(){ closeO("o-help"); if(S.pausedLeft!=null&&S.phase==="think"){ S.deadline=Date.now()+S.pausedLeft; S.tick=setInterval(updTimer,200); updTimer(); } S.pausedLeft=null; }
 $("help-close").onclick=closeHelp;
 $("o-help").onclick=e=>{ if(e.target.id==="o-help") closeHelp(); };
-$("m-skip").onclick=()=>{ closeO("o-menu"); endQuestion(null); };
+$("m-report").onclick=()=>{ closeO("o-menu"); openReport(); };
 $("m-end").onclick=()=>{ closeO("o-menu"); stopTimer(); finish(); };
 
 /* ================= RANKING (local) =================
@@ -2923,6 +2942,35 @@ $("rank-reset").onclick=()=>openO("o-confirm");
 $("cf-cancel").onclick=()=>closeO("o-confirm");
 $("o-confirm").onclick=e=>{ if(e.target.id==="o-confirm") closeO("o-confirm"); };
 $("cf-ok").onclick=()=>{ store.set("matches",[]); closeO("o-confirm"); sfx.click(); renderRank(); toast("Ranking zerado"); };
+
+
+/* ================= NOVO TEMA e DESISTIR =================
+   Novo tema: antes de abrir a primeira palavra, troca a pergunta por outra de um tema diferente e gira a roleta de novo.
+   Desistir: o grupo não faz ideia; mostra a resposta (ninguém pontua) e a próxima é uma pergunta nova no mesmo lugar (não gasta a partida). */
+function drawQuestion(excludeTheme){
+  const inDeck=new Set(S.deck.map(x=>x.id)), used=new Set(store.get("used",[]));
+  const pool=[]; THEMES.filter(t=>(S.random||S.themes.has(t.id))&&t.id!==excludeTheme).forEach(t=>t.qs.forEach((q,i)=>pool.push({id:t.id+":"+i,theme:t,q:q[0],a:q[1]})));
+  let fresh=pool.filter(p=>!inDeck.has(p.id)&&!used.has(p.id)); if(!fresh.length) fresh=pool.filter(p=>!inDeck.has(p.id)); if(!fresh.length) return null;
+  const pick=fresh[Math.floor(Math.random()*fresh.length)]; used.add(pick.id); store.set("used",[...used]); return pick;
+}
+function syncGroupBtns(){
+  const nt=$("b-newtheme"), gu=$("b-giveup"); if(!nt) return;
+  const live=$("s-game").classList.contains("on")&&!S.spinning&&(S.phase==="reveal"||S.phase==="think");
+  nt.disabled=!(live&&S.revealed===0&&S.phase==="reveal"); gu.disabled=!live;
+  if(gu.disabled) resetGiveUp();
+}
+function resetGiveUp(){ const gu=$("b-giveup"); clearTimeout(gu._t); gu.classList.remove("confirm"); gu.querySelector("span").textContent="Desistir"; }
+$("b-newtheme").onclick=()=>{
+  if($("b-newtheme").disabled) return;
+  if(!S.random&&S.themes.size<2){ toast("Só tem um tema escolhido nesta partida"); return; }
+  const q=drawQuestion(S.deck[S.qi].theme.id); if(!q){ toast("Não há outra pergunta disponível"); return; }
+  sfx.click(); S.deck[S.qi]=q; loadQuestion();
+};
+$("b-giveup").onclick=()=>{
+  const gu=$("b-giveup"); if(gu.disabled) return;
+  if(!gu.classList.contains("confirm")){ gu.classList.add("confirm"); gu.querySelector("span").textContent="Confirmar?"; sfx.click(); clearTimeout(gu._t); gu._t=setTimeout(resetGiveUp,3000); return; }
+  resetGiveUp(); stopTimer(); S.giveUp=true; sfx.timeout(); endQuestion(null);
+};
 
 /* ================= FINAL ================= */
 function finish(){
