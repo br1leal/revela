@@ -9,7 +9,7 @@ A pergunta aparece escondida em retângulos numerados. Na sua vez, o jogador ped
 Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (vírgula, interrogação) não conta e fica sempre à mostra.
 
 ## 2. Estado atual (pronto e funcionando)
-- **Arquivo único** `index.html` (HTML + CSS + JS + dados), sem dependências além do Google Fonts.
+- **Arquivo único** `index.html` (HTML + CSS + JS + dados). Dependências: Google Fonts e o three.js da ampulheta 3D (cópia local em `assets/vendor/three.module.min.js`, com CDN de reserva; sem ele, cai para a ampulheta 2D).
 - **Jogadores (elenco + mesa):** tela "Quem vai jogar?" com duas partes.
   - *Na mesa:* quem joga a próxima partida (2 a 5), na ordem das vezes; ✕ tira da mesa; linha "Novo jogador" (emoji + nome) cadastra e já senta na mesa. "Limpar mesa" esvazia só a mesa.
   - *Jogadores salvos:* chips de todos os jogadores do aparelho (mais recentes primeiro); tocar põe/tira da mesa. "Editar" mostra ✕ para excluir (aviso com "Desfazer" por 5 s) e tocar no chip abre a folha de editar nome/emoji.
@@ -33,6 +33,12 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
 - **Animação da vez:** discreta, na bancada e no placar. Na bancada o jogador anterior sai para cima e o próximo entra de baixo; por 1,6 s a instrução dá lugar a "Ana passou" / "Ana errou" / "Tempo de Ana acabou" / "Nova pergunta · começa a vez" (os toasts antigos saíram). No placar (só no celular) um sublinhado rosa (`.turn-ind`) desliza até quem está na vez; no computador o card já tem contorno, então não há linha lateral e o card cresce 3% e volta (ease-in-out, 0,56 s). Som "plim" curto. O telão não tem mais borda rosa (o rosa fica para quem está na vez). Código: `showTurn`, `moveInd`, `EVT`, `S.turnKey`, `S.pendingEv`, `nextTurn(ev)`, `sfx.turn`.
 - **Palavra 8 (regra própria do jogo):** a 8ª palavra aparece com uma mini bola 8 no lugar do número. Fica trancada (cadeado, não clicável, nem pelo teclado) até todos jogarem uma vez na pergunta (`S.turnsTaken`); ao liberar, pulsa uma vez. Quem abre a 8 arrisca: acertou na mesma vez = pontos normais +8; errou, passou ou o tempo acabou = ele −8 e cada um dos outros +8 (aviso com a bola 8 no telão). Na pergunta de ouro vira ±16. "Aceitar" no resultado desfaz a punição e dá o bônus. Placar pode ficar negativo. Nos textos fala-se só "a 8" (sem "bola"). Código: `S.eightIdx`, `S.eightBy`, `eightLocked`, `eightPenalty`, `showEightFlash`, `val8`, `BALL8`, `sfx.eight`.
 - **Eu sei! (fora da vez, 1 por partida):** antes de quem está na vez responder (fases de escolher número e de pensar), outro jogador toca no próprio card do placar ("Eu sei!"; no celular, um "!" rosa no chip). Abre a folha `#o-oos`, o tempo da vez pausa, 20 s para escrever, "Quase!" dá 2ª tentativa, "Desistir" não gasta a chance. Acertou = metade dos pontos (arredondado para cima; dobra na de ouro) e encerra a pergunta. Errou ou tempo = −8, chance gasta, a vez continua. Código: `canOOS`, `openOOS`, `oosFail`, `closeOOS`, `p.oos`.
+- **Ampulheta:** no computador é 3D (three.js), flutua no espaço livre embaixo do placar, gira devagar, vira ao começar a vez; areia no rosa do DS (`--pink`) e, nos 10 s finais, a ampulheta inteira fica no vermelho de erro (`--bad`) e balança (vale também para a 2D). A areia de cima é um sólido que acompanha o raio interno do vidro (não sai do bulbo). Parallax: ampulheta e número flutuam em ritmos diferentes (5,5 s e 7,4 s) e seguem o mouse com intensidades diferentes (ampulheta mais, número menos); o número fica ao lado. No celular é 2D, na bancada, com o número ao lado. Tique a cada segundo nos 30 s finais e duas vezes por segundo (mais agudo) nos 10 finais; vale também na folha do Eu sei!.
+- **Bancada:** jogador da vez + ações (resposta, Passo, Responder, Dica). "Como pontuar" e atalhos foram para o menu da partida em **Como jogar** (pausa o tempo).
+- **Modo claro/escuro:** botão sol/lua fixo no canto superior direito em todas as telas; na partida fica no cabeçalho.
+- **Aviso da 8:** quando alguém erra/passa/perde o tempo com a 8 aberta, a tela escurece e aparece um cartão grande com a bola 8 e os pontos de cada um (−8 / +8) por 4,5 s (Continuar, toque fora ou Esc fecham). A vez só passa depois.
+- **Aleatório:** ao ligar, todos os temas aparecem marcados e ficam travados; ao desligar, volta a seleção anterior.
+- **Voz (narração + microfone com orbe):** pronta no código, mas **desligada** por `VOZ_ATIVA=false`. Para ligar, trocar para `true` (aparecem o botão Falar e a chave Narração). Microfone funciona no Chrome e Safari; Firefox não.
 - **Pergunta de ouro:** a última pergunta da partida vale o dobro (`worth()` × 2). Anúncio com moeda no telão (~2 s, toque fecha), telão com borda dourada, retângulos dourados, "vale X" dourado, selo "★ Pergunta de ouro · 2x" no cabeçalho ("★ 2x" no celular) e último segmento da barra contornado em dourado desde o início.
 - **Ranking local:** tela `#s-rank` (botão na home). Por jogador salvo: vitórias, partidas e % de vitórias; líder em rosa (sem líder se empate no topo). Empate no topo = vitória para todos; partida sem pontos não conta; jogador excluído some do ranking; "Zerar ranking" com confirmação (`#o-confirm`). Dados em `revela:matches` = `[{id, at, players:[{id,name,emoji,score}], winners:[id]}]`, pronto para o Supabase.
 - **Modo claro/escuro:** botão sol/lua na home e item no menu da partida; salvo em `revela:theme` (sem escolha, segue o sistema). O telão tem versão clara (lavanda com retângulos brancos), tudo por tokens (`--screen-*`, `--tile-*`, `--gold-*`). Contraste revisado (WCAG AA): botões rosa usam `--pink-btn` (#D6206F) nos dois modos, texto rosa sobre rosa claro usa `--pink-ink`.
@@ -40,7 +46,7 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
 - **Pergunta no telão alinhada à esquerda** (não centralizada).
 - **Emojis:** 78 no total (30 originais + 48 mais engraçados).
 
-- **Testes de melhorias:** ficam em `docs/testes/` (ex.: `melhoria-2-vez.html`, `teste-3-7-10-12.html`, `teste-4-13.html`, `teste-avatares.html`). Regra: teste HTML aprovado antes de mexer no `index.html`.
+- **Testes de melhorias:** ficam em `docs/testes/` (ex.: `melhoria-2-vez.html`, `teste-3-7-10-12.html`, `teste-4-13.html`, `teste-8-9.html`, `teste-avatares.html`). Regra: teste HTML aprovado antes de mexer no `index.html`.
 
 ## 3. Design (DS "Phantom", o mesmo do Duvido!)
 - **Conceito:** telão de auditório. O quadro de palavras é a peça principal; o resto é "bancada", discreto e alinhado a ele.
@@ -69,8 +75,8 @@ Ordem sugerida, das mais simples às que dependem do Supabase.
 5. **Temas novos:** Dinossauros; Nostalgia anos 80; Nostalgia anos 90.
 6. **Nível Família.** Para jogar com pais e avós (60 a 70+ anos): brincadeiras antigas, cantores clássicos, craques antigos do futebol, faroeste e outros gêneros de filme antigos, novelas e programas antigos, objetos e costumes de antigamente. No nível Família **não se escolhem temas**: o jogo usa um conjunto próprio de perguntas nostálgicas.
 7. **Ranking / histórico.** *Versão local feita (vitórias, partidas, %). Falta: levar para o Supabase.* Recordes, quem mais venceu, maior pontuação numa pergunta. Começa local e depois vai para o Supabase.
-8. **Narração.** Ler em voz alta a palavra revelada (Web Speech API, `speechSynthesis`, voz pt-BR).
-9. **Responder por fala.** Reconhecimento de voz (`SpeechRecognition`, pt-BR) preenchendo a caixa de resposta. Verificar suporte por navegador e manter a digitação como alternativa.
+8. **Narração.** *Pronta e desligada (`VOZ_ATIVA`).* Ler em voz alta a palavra revelada (Web Speech API, `speechSynthesis`, voz pt-BR).
+9. **Responder por fala.** *Pronto e desligado (`VOZ_ATIVA`), com orbe de voz e pedido de número por voz.* Reconhecimento de voz (`SpeechRecognition`, pt-BR) preenchendo a caixa de resposta. Verificar suporte por navegador e manter a digitação como alternativa.
 
 10. ~~**Modo claro e escuro com botão.**~~ Feito (telão claro próprio). Hoje o jogo segue o tema do sistema (tokens prontos em `:root`, `@media (prefers-color-scheme)` e `[data-theme]`). Falta:
     - um botão de alternar (sol/lua) visível na tela inicial e no menu da partida, salvo no `localStorage`;
