@@ -810,9 +810,35 @@ body.in-game .theme-fab{display:none}
 .only-mobile{display:none}
 @media (max-width:1000px){
   .g-act{width:44px;padding:0;justify-content:center} .g-act span{display:none}
-  .g-act.confirm{width:auto;padding:0 12px} .g-act.confirm span{display:inline}
+  .g-act.confirm{width:44px;padding:0} .g-act.confirm span{display:none}
   #b-report{display:none}
+  .g-tools .theme-btn{display:none}
   .only-mobile{display:inline-flex}
+}
+
+/* temas: quantas já foram jogadas */
+.theme .t-bar{display:block;height:4px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:2px}
+.theme .t-bar i{display:block;height:100%;border-radius:4px;background:var(--pink);transition:width .4s ease-out}
+.theme .t-count.all{color:var(--pink-ink);font-weight:700}
+.theme[aria-pressed="true"] .t-bar{background:color-mix(in srgb,var(--pink) 18%,transparent)}
+/* modo Rápido: fichas */
+#b-ficha{grid-area:ficha;height:56px;padding:0 16px 0 10px;gap:8px}
+#b-ficha[hidden]{display:none}
+#b-ficha .coin,.pl-fichas i{display:inline-grid;place-items:center;border-radius:50%;background:var(--sand);color:#2A1C00;box-shadow:inset 0 0 0 2px color-mix(in srgb,#2A1C00 22%,transparent)}
+#b-ficha .coin{width:28px;height:28px;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums}
+#b-ficha:disabled .coin{filter:grayscale(.7);opacity:.6}
+#b-ficha.armed{background:var(--pink-soft);color:var(--pink-ink);box-shadow:0 0 0 2px var(--pink) inset}
+#b-ficha.armed .coin{animation:coinPulse 1s ease-in-out infinite}
+@keyframes coinPulse{50%{transform:scale(1.12) rotate(-8deg)}}
+.pl-fichas{display:inline-flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
+.pl-fichas i{width:12px;height:12px}
+#s-game.fast .answer-box{grid-template-columns:minmax(0,1fr) auto auto auto auto auto;grid-template-areas:"input mic ficha pass answer dica" "msg msg msg msg msg msg"}
+.no-voice #s-game.fast .answer-box{grid-template-columns:minmax(0,1fr) auto auto auto auto;grid-template-areas:"input ficha pass answer dica" "msg msg msg msg msg"}
+@media (max-width:1000px){
+  .no-voice #s-game.fast .answer-box,#s-game.fast .answer-box{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;grid-template-areas:"input input ficha" "msg msg msg" "pass answer dica"}
+  #b-ficha{height:52px;padding:0 12px}
+  #b-ficha .fl{display:none}
+  #b-ficha.armed .fl{display:inline}
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -887,6 +913,7 @@ body.in-game .theme-fab{display:none}
       <div class="settings">
         <div class="divider"></div>
         <div class="field"><span class="field-label">Nível</span><div class="seg" id="seg-level"><button data-l="normal" aria-pressed="true">Normal</button><button data-l="dificil" aria-pressed="false">Difícil</button></div><span class="level-note" id="level-note"></span></div>
+        <div class="field"><span class="field-label">Modo</span><div class="seg" id="seg-mode"><button data-m="0" aria-pressed="true">Clássico</button><button data-m="1" aria-pressed="false">Rápido · fichas</button></div><span class="level-note" id="mode-note"></span></div>
         <div class="field"><span class="field-label">Perguntas na partida</span><div class="seg" id="seg-total"></div></div>
         <div class="field"><span class="field-label">Tempo para responder</span><div class="seg" id="seg-time"></div></div>
         <div class="toggle-row"><span><span class="t-main">Roleta antes da pergunta</span><span class="t-sub">Sorteio do tema e estrelas de dificuldade</span></span><button class="switch" id="sw-spin" role="switch" aria-checked="true" aria-label="Roleta antes da pergunta"></button></div>
@@ -911,7 +938,7 @@ body.in-game .theme-fab{display:none}
     <div class="g-prog"><span class="gold-tag">★ <span class="gt-long">Pergunta de ouro · </span>2x</span><span class="g-level">Difícil</span><div class="segs" id="g-segs" aria-hidden="true"></div><span id="g-count">1/10</span></div>
     <div class="g-tools">
       <button class="g-act" id="b-newtheme" title="Sortear outro tema (antes de abrir a primeira palavra)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 6.5A6.5 6.5 0 1 0 16.4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 2.8v3.9h-3.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Novo tema</span></button>
-      <button class="g-act" id="b-giveup" title="Ninguém sabe? Mostra a resposta e troca a pergunta"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M1.8 10S5 4.2 10 4.2 18.2 10 18.2 10 15 15.8 10 15.8 1.8 10 1.8 10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>Desistir</span></button>
+      <button class="g-act" id="b-swap" title="Trocar por outra pergunta do mesmo tema, sem ver a resposta"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6.5h11.5M11.5 3.5l3 3-3 3M17 13.5H5.5M8.5 10.5l-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Trocar pergunta</span></button>
       <button class="icon-btn theme-btn" data-theme-toggle aria-label="Alternar modo claro e escuro"><svg class="sun" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 1.8v2.2M10 16v2.2M1.8 10H4M16 10h2.2M4.2 4.2l1.6 1.6M14.2 14.2l1.6 1.6M4.2 15.8l1.6-1.6M14.2 5.8l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
       <button class="icon-btn" id="b-report" aria-label="Reportar problema nesta pergunta" title="Reportar problema nesta pergunta"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M5 17V3.5m0 0h8.5l-1.6 3 1.6 3H5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button class="icon-btn" id="g-menu" aria-label="Menu da partida"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
@@ -956,6 +983,7 @@ body.in-game .theme-fab{display:none}
       <button type="button" class="btn btn-ghost" id="b-pass" disabled>Passo</button>
       <button type="submit" class="btn btn-primary" id="b-answer" disabled>Responder</button>
       <button type="button" class="btn btn-ghost" id="b-hint" disabled>💡 Dica</button>
+      <button type="button" class="btn btn-ghost" id="b-ficha" hidden disabled><span class="coin" id="ficha-n">8</span><span class="fl">Palavra extra</span></button>
       <div class="a-msg" id="a-msg" aria-live="polite"></div>
     </form>
     <div class="result-card" id="o-result" role="region" aria-label="Resultado da pergunta" aria-live="polite">
@@ -1071,7 +1099,8 @@ body.in-game .theme-fab{display:none}
   <h2 id="help-title">Como jogar</h2>
   <div class="help-list">
     <div><span class="hi">🎯</span><b>Como pontuar</b><p>Quem acerta leva 1 ponto por palavra que ainda estava escondida.</p></div>
-    <div><span class="hi">🎱</span><b>A palavra 8</b><p>Só abre depois que todos jogarem uma vez. Quem abre e acerta ganha +8; se errar ou passar, perde 8 e os outros ganham 8.</p></div>
+    <div id="help-8"><span class="hi">🎱</span><b>A palavra 8</b><p>Só abre depois que todos jogarem uma vez. Quem abre e acerta ganha +8; se errar ou passar, perde 8 e os outros ganham 8.</p></div>
+    <div id="help-fichas" hidden><span class="hi">🪙</span><b>Fichas (modo Rápido)</b><p>Cada jogador tem fichas para a partida toda. Depois de abrir sua palavra, gaste 1 ficha para abrir mais uma (só 1 por vez). A palavra 8 é comum neste modo.</p></div>
     <div><span class="hi">🙋</span><b>Eu sei!</b><p>Uma vez por partida, antes de quem está na vez responder: acertou leva metade dos pontos; errou perde 8.</p></div>
     <div><span class="hi">★</span><b>Pergunta de ouro</b><p>A última pergunta da partida vale o dobro.</p></div>
     <div><span class="hi">💡</span><b>Dica</b><p>Uma por jogador na partida: mostra a primeira letra e o tamanho da resposta para todos.</p></div>
@@ -1084,6 +1113,7 @@ body.in-game .theme-fab{display:none}
   <h2>Partida em andamento</h2>
   <div class="menu-list">
     <button class="btn btn-ghost only-mobile" id="m-report">Reportar problema nesta pergunta</button>
+    <button class="btn btn-ghost only-mobile" id="m-mode" data-theme-toggle>Modo claro/escuro</button>
     <button class="btn btn-ghost" id="m-end">Encerrar e ver placar</button>
     <button class="btn btn-ghost" id="m-help">Como jogar</button>
     <button class="btn btn-primary" id="m-close">Continuar jogando</button>
@@ -1767,7 +1797,7 @@ const ic = t => ICONS[t.id] || t.emoji;
 const EMOJIS = ["😎","🦊","🐸","🐼","🦁","🐙","🦄","🐯","🐵","🐶","🐱","🐧","🦉","🐢","🦖","🍕","🌮","🍩","👑","🤠","👻","🤖","👽","🔥","⭐","🌈","🎸","⚽","🍉","🎃",
   "🤡","🥸","🤓","🤪","😜","🥳","🤯","🙃","😈","👹","💀","👾","🦩","🦥","🦦","🦔","🐔","🦆","🦀","🦑","🐌","🦒","🦛","🦘","🧌","🧙","🧛","🧟","🥷","🦹","🧞","🥑","🌶️","🍄","🧀","🥨","🍟","🧠","🦷","🪿","🫎","🦭","🪼","🐊","🐷","🐮","🐻‍❄️","🦨"];
 const TOTALS = [5,8,10,12];
-const TIMES = [30,60,90];
+const TIMES = [30,40,60,90];
 /* Respostas alternativas aceitas (acento, hífen e maiúsculas já são ignorados) */
 const ALIASES = {
   "Brigadeiro":["negrinho"], "Açaí":["acai na tigela"], "Taco":["tacos"], "Sushi":["sushis"],
@@ -1908,8 +1938,9 @@ const S = {
   hints: store.get("hints",true),
   spin: store.get("spin",true),
   level: store.get("level","normal"),
+  fast: store.get("fast",false),
   total: store.get("total",10),
-  time: store.get("time",60),
+  time: store.get("tempo",40),
   sound: store.get("sound",true),
   narrate: store.get("narrate",true),
   deck:[], qi:0, tokens:[], wordCount:0, revealed:0,
@@ -1954,6 +1985,7 @@ function playErr(){ if(!S.sound) return; const a=ac();
   loadErr(a).then(go).catch(htmlErr); }
 function buzz(ms){ if(S.sound && navigator.vibrate) try{navigator.vibrate(ms)}catch(e){} }
 const sfx = {
+  coin(){tone(988,.07,"square",.09);tone(1319,.16,"square",.09,.07)},
   pop(){tone(660,.08,"triangle",.2);tone(990,.1,"triangle",.14,.05);buzz(15)},
   tick(){tone(880,.06,"square",.06)},
   tickFast(){tone(1175,.045,"square",.07)},
@@ -2247,10 +2279,13 @@ $("go-themes").onclick=()=>{
 };
 
 /* ================= TEMAS / CONFIG ================= */
+function themeCount(t,used){ const n=playedIn(t,used), m=t.qs.length, all=n>=m;
+  return `<span class="t-count${all?" all":""}">${all?"Tudo jogado · vai recomeçar":`${n} de ${m} jogadas`}</span><span class="t-bar" aria-hidden="true"><i style="width:${Math.round(n/m*100)}%"></i></span>`; }
 function renderThemes(){
+  const used=getUsed();
   $("themes").innerHTML=THEMES.map(t=>`
     <button class="theme" data-t="${t.id}" aria-pressed="${S.themes.has(t.id)}">
-      <span class="t-emoji">${ic(t)}</span><span class="t-name">${t.nome}</span><span class="t-count">${t.qs.length} perguntas</span>
+      <span class="t-emoji">${ic(t)}</span><span class="t-name">${t.nome}</span>${themeCount(t,used)}
     </button>`).join("");
   $("themes").insertAdjacentHTML("afterbegin",`<button class="theme random" id="t-random" aria-pressed="${S.random}"><span class="t-emoji">🎲</span><span class="t-name">Aleatório</span><span class="t-count">Um tema sorteado a cada pergunta</span></button>`);
   const paint=()=>{ $("themes").classList.toggle("random-on",S.random); $("t-random").setAttribute("aria-pressed",S.random);
@@ -2262,13 +2297,13 @@ function renderThemes(){
     const id=b.dataset.t; S.themes.has(id)?S.themes.delete(id):S.themes.add(id);
     b.setAttribute("aria-pressed",S.themes.has(id)); store.set("themes",[...S.themes]); sfx.click(); syncStart();
   });
-  seg("seg-total",TOTALS,S.total,v=>{S.total=v;store.set("total",v)},v=>v);
-  seg("seg-time",TIMES,S.time,v=>{S.time=v;store.set("time",v)},v=>v===60?"1 min":v+"s");
+  seg("seg-total",TOTALS,S.total,v=>{S.total=v;store.set("total",v);syncMode()},v=>v);
+  seg("seg-time",TIMES,S.time,v=>{S.time=v;store.set("tempo",v)},v=>v===60?"1 min":v+"s");
   $("sw-sound").setAttribute("aria-checked",S.sound);
   $("sw-narrate").setAttribute("aria-checked",S.narrate); $("sw-narrate").disabled=!S.sound;
   $("sw-hints").setAttribute("aria-checked",S.hints);
   $("sw-spin").setAttribute("aria-checked",S.spin);
-  syncLevel();
+  syncLevel(); syncMode();
   syncStart();
 }
 function seg(id,vals,cur,set,label){
@@ -2293,15 +2328,30 @@ function syncLevel(){
   $("hints-sub").textContent=hard()?"Desligadas no nível Difícil":"Uma por jogador na partida";
 }
 $("seg-level").querySelectorAll("button").forEach(b=>b.onclick=()=>{ S.level=b.dataset.l; store.set("level",S.level); syncLevel(); sfx.click(); });
+/* ---------- modo Rápido: cada jogador tem fichas; 1 ficha = 1 palavra extra na sua vez (máx. 1 por vez). Sem a regra da 8. ---------- */
+const fichasN=()=>Math.min(8,Math.round(S.total*.8));
+function syncMode(){
+  $("seg-mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.m==="1")===S.fast));
+  $("mode-note").textContent=S.fast?`Cada jogador recebe ${fichasN()} fichas. Na sua vez, depois de abrir uma palavra, gaste 1 ficha para abrir mais uma (a ampulheta não para). A palavra 8 vira uma palavra comum.`:"";
+}
+$("seg-mode").querySelectorAll("button").forEach(b=>b.onclick=()=>{ S.fast=b.dataset.m==="1"; store.set("fast",S.fast); syncMode(); sfx.click(); });
 
 /* ================= PARTIDA ================= */
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+/* revela:used = ids "tema:i" das perguntas que chegaram até a resposta. Trocadas e puladas não entram.
+   Quando todas de um tema foram jogadas, só aquele tema recomeça. */
+const themeIds=t=>t.qs.map((_,i)=>t.id+":"+i);
+const getUsed=()=>new Set(store.get("used",[]));
+function playedIn(t,used=getUsed()){ return themeIds(t).filter(id=>used.has(id)).length; }
+function refreshExhausted(themes,used){ let ch=false; themes.forEach(t=>{ const ids=themeIds(t); if(ids.every(id=>used.has(id))){ ids.forEach(id=>used.delete(id)); ch=true; } }); if(ch) store.set("used",[...used]); }
+function markPlayed(id){ const u=getUsed(); if(!u.has(id)){ u.add(id); store.set("used",[...u]); } }
 function buildDeck(){
   let pool=[];
-  THEMES.filter(t=>S.random||S.themes.has(t.id)).forEach(t=>t.qs.forEach((q,i)=>pool.push({id:t.id+":"+i,theme:t,q:q[0],a:q[1]})));
-  const used=new Set(store.get("used",[]));
+  const themes=THEMES.filter(t=>S.random||S.themes.has(t.id)), used=getUsed(); refreshExhausted(themes,used);
+  themes.forEach(t=>t.qs.forEach((q,i)=>pool.push({id:t.id+":"+i,theme:t,q:q[0],a:q[1]})));
   let fresh=pool.filter(p=>!used.has(p.id));
-  if(fresh.length<Math.min(S.total,pool.length)){ pool.forEach(p=>used.delete(p.id)); fresh=pool; }
+  const need=Math.min(S.total,pool.length);
+  if(fresh.length<need) fresh=fresh.concat(shuffle(pool.filter(p=>used.has(p.id))).slice(0,need-fresh.length));
   let deck;
   if(S.random){
     const by={}; shuffle(fresh).forEach(p=>(by[p.theme.id]=by[p.theme.id]||[]).push(p));
@@ -2312,7 +2362,6 @@ function buildDeck(){
       const k=c[Math.floor(Math.random()*c.length)]; deck.push(by[k].pop()); last=k;
     }
   } else deck=shuffle(fresh).slice(0,Math.min(S.total,fresh.length));
-  deck.forEach(d=>used.add(d.id)); store.set("used",[...used]);
   return deck;
 }
 function tokenize(q){
@@ -2325,9 +2374,10 @@ function startGame(){
   { const a=ac(); if(a) loadErr(a).catch(()=>{}); }
   S.players=tablePlayers();
   const now=Date.now(); R.table.forEach(id=>{const r=byId(id); if(r) r.lastPlayedAt=now}); saveR();
-  S.players.forEach(p=>{p.score=0;p.hint=hintsOn();p.oos=true});
+  S.players.forEach(p=>{p.score=0;p.hint=hintsOn();p.oos=true;p.fichas=S.fast?fichasN():0});
+  $("s-game").classList.toggle("fast",S.fast);
   $("s-game").classList.toggle("hard",hard());
-  S.deck=buildDeck(); S.qi=0; S.giveUp=false; S.turnKey=null; S.indPos=null;
+  S.deck=buildDeck(); S.qi=0; S.turnKey=null; S.indPos=null;
   show("s-game"); loadQuestion();
 }
 $("start").onclick=()=>{ac();sfx.right();startGame()};
@@ -2337,7 +2387,8 @@ function loadQuestion(){
   const d=S.deck[S.qi];
   S.tokens=tokenize(d.q);
   S.wordCount=S.tokens.filter(t=>t.word).length;
-  { let c=0; S.eightIdx=S.tokens.findIndex(t=>t.word&&++c===8); }
+  { let c=0; S.eightIdx=S.fast?-1:S.tokens.findIndex(t=>t.word&&++c===8); }
+  S.extra=false; S.fichaAt=null;
   S.revealed=0; S.attempts=[]; S.retried=false; S.hintShown=false; $("hint-box").hidden=true;
   S.turnsTaken=0; S.eightBy=null; S.eightBonus=0; S.winPts=null; S.winTag="";
   closeO("o-result"); $("s-game").classList.remove("show-result");
@@ -2388,20 +2439,25 @@ function renderHUD(){
     const can=canOOS(i);
     return `<div class="pl ${act?"active":""} ${act&&animate?"turn-in":""} ${prev[i]!=null&&p.score>prev[i]?"bump":""} ${prev[i]!=null&&p.score<prev[i]?"drop":""} ${can?"can-oos":""}" ${can?`data-oos="${i}" role="button" tabindex="0" aria-label="${esc(p.name)}: Eu sei! Responder fora da vez"`:""}>${can?`<span class="oos-dot" aria-hidden="true">!</span>`:""}
       <span class="pl-e">${p.emoji}</span><span class="pl-n">${esc(p.name)}</span><span class="pl-s">${p.score}</span>
-      <span class="pl-tag">${act?"<span>Na vez</span>":""}${p.hint?`<span title="Dica disponível">💡 dica</span>`:""}${can?`<span class="eusei">Eu sei!</span>`:(!act&&p.oos===false?`<span class="oos-used">Eu sei!</span>`:"")}</span>
+      <span class="pl-tag">${act?"<span>Na vez</span>":""}${S.fast?`<span class="pl-fichas" title="Fichas"><i></i>${p.fichas}</span>`:""}${p.hint?`<span title="Dica disponível">💡 dica</span>`:""}${can?`<span class="eusei">Eu sei!</span>`:(!act&&p.oos===false?`<span class="oos-used">Eu sei!</span>`:"")}</span>
     </div>`; }).join("")+`<span class="turn-ind" id="turn-ind" aria-hidden="true"></span>`;
   S.prevScores=S.players.map(p=>p.score);
   moveInd(animate);
   $("g-scores").querySelectorAll("[data-oos]").forEach(el=>{ el.onclick=()=>openOOS(+el.dataset.oos); el.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openOOS(+el.dataset.oos); } }; });
   const p=S.players[S.turn];
   syncGroupBtns();
-  const hint={reveal:"Escolha o número da palavra para revelar",think:"Escreva a resposta ou passe a vez",judge:"Conferindo a resposta"}[S.phase]||"";
+  const hint={reveal:S.extra?"Escolha a palavra extra (gasta 1 ficha)":"Escolha o número da palavra para revelar",think:"Escreva a resposta ou passe a vez",judge:"Conferindo a resposta"}[S.phase]||"";
   if(changed){ showTurn(p,hint,S.pendingEv,animate); if(animate) sfx.turn(); S.turnKey=key; S.pendingEv=null; }
   else { const tip=document.querySelector("#turn-stack .turn-inner:last-child .tip"); if(tip) tip.textContent=hint; }
   const thinking=S.phase==="think", inp=$("a-input");
   $("b-pass").disabled=!thinking; $("b-answer").disabled=!thinking; inp.disabled=!thinking;
   if(!thinking){ inp.value=""; msg(""); S.retried=false; inp.classList.remove("wrong","right"); }
   $("b-hint").hidden=!hintsOn();
+  { const fb=$("b-ficha"); fb.hidden=!S.fast;
+    if(S.fast){ const spent=S.fichaAt===S.turnsTaken; $("ficha-n").textContent=p.fichas; fb.classList.toggle("armed",!!S.extra);
+      fb.disabled=S.extra?false:!(thinking&&p.fichas>0&&!spent&&S.revealed<S.wordCount);
+      fb.querySelector(".fl").textContent=S.extra?"Cancelar":"Palavra extra";
+      fb.title=S.extra?"Desistir da palavra extra (a ficha não é gasta)":!p.fichas?"Suas fichas acabaram":spent?"Só 1 ficha por vez":"Gastar 1 ficha e abrir mais uma palavra"; } }
   $("b-hint").disabled=!(thinking&&p.hint&&!S.hintShown);
   $("b-hint").textContent=S.hintShown?"💡 Aberta":p.hint?"💡 Dica":"💡 Usada";
   $("b-hint").title=S.hintShown?"A dica já está no telão":p.hint?"Usar minha dica (só 1 na partida)":"Você já usou sua dica";
@@ -2409,7 +2465,7 @@ function renderHUD(){
   if(REC&&REC._mode!==micTarget()&&$("voice-layer").hidden) micStop(true);
   $("b-mic").disabled=!micTarget();
   if(thinking && matchMedia("(hover:hover)").matches) setTimeout(()=>inp.focus(),60);
-  if(S.phase!=="think"){ $("timer").classList.add("idle"); $("timer").classList.remove("warn"); $("t-num").textContent=S.time; setSand(1); }
+  if(S.phase!=="think"&&!S.extra){ $("timer").classList.add("idle"); $("timer").classList.remove("warn"); $("t-num").textContent=S.time; setSand(1); }
   const active=$("g-scores").querySelector(".active"); if(active&&matchMedia("(max-width:1000px)").matches) active.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});
 }
 /* ================= EU SEI! (fora da vez, 1 por partida) ================= */
@@ -2612,12 +2668,13 @@ function playSpin(d,done){
   const L=$("spin-layer"), strip=$("spin-strip"), n=getDiff(d), secret=hard();
   $("g-stars").innerHTML=starsHTML(n,true); $("g-stars").setAttribute("title",`Dificuldade ${n} de 5 · ${DIFF_LABEL[n]}`);
   if(!S.spin){ done(); return; }
-  const pool=spinPool(), reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, spinIt=pool.length>1&&!reduce;
-  const N=spinIt?48:5, T=spinIt?N-4:2; let last=null; const items=[];
+  const quick=!!S.quickSpin; S.quickSpin=false;
+  const pool=spinPool(), reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, spinIt=pool.length>1&&!reduce&&!quick;
+  const N=spinIt?48:quick?1:5, T=spinIt?N-4:quick?0:2; let last=null; const items=[];
   for(let i=0;i<N;i++){ if(i===T){ items.push(secret?{secret:true}:d.theme); last=d.theme; continue; }
     let t; do{ t=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>2&&(t===last||(i===T-1||i===T+1)&&t===d.theme)); items.push(t); last=t; }
   strip.innerHTML=items.map((t,i)=>t.secret?`<div class="spin-card secret" data-i="${i}"><span class="se">🔒</span><span class="sn">Tema secreto</span></div>`:`<div class="spin-card" data-i="${i}"><span class="se">${ic(t)}</span><span class="sn">${esc(t.nome)}</span></div>`).join("");
-  $("spin-eyebrow").textContent=secret?"Nível difícil":"Sorteando o tema";
+  $("spin-eyebrow").textContent=quick?"Nova pergunta do mesmo tema":secret?"Nível difícil":"Sorteando o tema";
   $("spin-name").classList.remove("on"); $("spin-name").textContent=""; $("spin-stars").innerHTML=starsHTML(n,false); $("spin-diff").textContent="";
   L.hidden=false; L.classList.remove("out","done");
   const gt=$("g-theme"), gtHTML=gt.innerHTML; if(spinIt) gt.innerHTML=`<span class="ti">🎲</span><span class="tn secret">Sorteando…</span>`;
@@ -2632,7 +2689,7 @@ function playSpin(d,done){
     $("spin-name").textContent=secret?"Tema secreto":d.theme.nome; $("spin-name").classList.add("on"); sfx.spinEnd();
     const st=[...$("spin-stars").children]; st.forEach((el,i)=>{ if(i<n) setTimeout(()=>{ el.classList.add("on"); sfx.star(i); },reduce?0:260+i*170); });
     setTimeout(()=>{ $("spin-diff").textContent=`${DIFF_LABEL[n]} · ${n} de 5`; },reduce?0:260+n*170);
-    closeT=setTimeout(close,(reduce?2400:2900)+n*170);
+    closeT=setTimeout(close,quick?1500+n*170:(reduce?2400:2900)+n*170);
     L.onclick=e=>{ if(e.target.id!=="spin-skip") close(); };
   };
   const step=now=>{ if(!t0) t0=now; const k=Math.min(1,(now-t0)/D), e=1-Math.pow(1-k,3.2); setX(x0+(xT-x0)*e); if(k<1) raf=requestAnimationFrame(step); else reveal(); };
@@ -2672,8 +2729,9 @@ function reveal(i){
   if(S.spinning||S.phase!=="reveal"||S.tokens[i].open) return;
   if(i===S.eightIdx&&eightLocked()){ toast("A 8 abre depois que todos jogarem uma vez"); return; }
   S.tokens[i].open=true; S.revealed++; S.phase="think";
+  const ex=S.extra; if(ex){ S.extra=false; const p=S.players[S.turn]; p.fichas--; S.fichaAt=S.turnsTaken; msg(""); setTimeout(()=>sfx.coin(),90); }
   if(i===S.eightIdx) S.eightBy=S.turn;
-  sfx.pop(); renderBoard(i); renderHUD(); startTimer(); setTimeout(()=>speak(S.tokens[i].word),140);
+  sfx.pop(); renderBoard(i); renderHUD(); if(!ex) startTimer(); setTimeout(()=>speak(S.tokens[i].word),140);
   if(i===S.eightIdx){ sfx.eight(); msg(`Você abriu a 8! Acerte e ganhe +${val8()}. Errar ou passar: você −${val8()} e os outros +${val8()}.`,"near"); }
 }
 /* quem abriu a 8 e não acertou: −8 para ele, +8 para cada um dos outros (dobra na pergunta de ouro) */
@@ -2723,7 +2781,7 @@ function updTimer(){
   $("t-num").textContent=sec;
   setSand(left/(S.time*1000));
   $("timer").classList.toggle("warn",sec<=10);
-  if(left>0){ if(sec<=10){ const half=Math.ceil(left/500); if(half!==S.lastBeep){ S.lastBeep=half; sfx.tickFast(); } } else if(sec<=30&&sec!==S.lastBeep){ S.lastBeep=sec; sfx.tick(); } }
+  if(left>0){ if(sec<=10){ const half=Math.ceil(left/500); if(half!==S.lastBeep){ S.lastBeep=half; sfx.tickFast(); } } else if(sec<=15&&sec!==S.lastBeep){ S.lastBeep=sec; sfx.tick(); } }
   if(left<=0){ stopTimer(); sfx.timeout(); S.phase="wait"; if(eightPenalty(()=>nextTurn("time"))) renderHUD(); else nextTurn("time"); }
 }
 
@@ -2850,14 +2908,14 @@ function nextTurn(ev){
   S.pendingEv=ev?{type:ev,name:S.players[S.turn].name}:null;
   const wasLocked=eightLocked(); S.turnsTaken++; S.eightBy=null;
   if(wasLocked&&!eightLocked()&&S.eightIdx>=0&&!S.tokens[S.eightIdx].open) S.unlockNow=true;
-  S.turn=(S.turn+1)%S.players.length; S.phase="reveal";
+  S.turn=(S.turn+1)%S.players.length; S.phase="reveal"; S.extra=false;
   renderBoard(); renderHUD();
 }
 function endQuestion(winner){
   if(hard()){ const t=S.deck[S.qi].theme; $("g-theme").innerHTML=`<span class="ti">${ic(t)}</span><span class="tn">${esc(t.nome)}</span>`; $("g-theme").classList.add("unveil"); }
-  stopTimer(); S.phase="end";
+  stopTimer(); S.phase="end"; S.extra=false;
   renderBoard(-1,true); renderHUD();
-  const d=S.deck[S.qi];
+  const d=S.deck[S.qi]; markPlayed(d.id);
   if(winner!==null){
     const p=S.players[winner], pts=S.winPts!=null?S.winPts:worth();
     $("r-kicker").textContent=`${p.emoji} ${p.name} acertou${S.winTag?" "+S.winTag:""} com ${S.revealed} ${S.revealed===1?"palavra aberta":"palavras abertas"}`;
@@ -2865,7 +2923,7 @@ function endQuestion(winner){
     $("r-points").className="big-points"+(pts>0?"":" zero");
     if(S.gold&&pts>0) $("r-points").textContent+=" · ouro 2x";
   }else{
-    $("r-kicker").textContent=S.giveUp?"O grupo desistiu desta":"Ninguém acertou desta vez";
+    $("r-kicker").textContent="Ninguém acertou desta vez";
     $("r-points").textContent="Ninguém pontua";
     $("r-points").className="big-points zero";
   }
@@ -2878,7 +2936,7 @@ function endQuestion(winner){
   box.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>{const a=S.attempts[+b.dataset.acc];S.players[a.pi].score+=a.pts;
     if(a.eight) S.players.forEach((q,j)=>{ q.score+= j===a.pi?2*a.eight:-a.eight; });
     if(a.oos) S.players[a.pi].score+=a.oos;b.disabled=true;b.textContent="Aceita ✓";sfx.pop();renderHUD();});
-  $("r-next").textContent=S.giveUp?"Nova pergunta":S.qi+1>=S.deck.length?"Ver placar final":"Próxima pergunta";
+  $("r-next").textContent=S.qi+1>=S.deck.length?"Ver placar final":"Próxima pergunta";
   setTimeout(()=>{ openO("o-result"); $("s-game").classList.add("show-result"); },winner!==null?1100:700);
 }
 function goldIntro(){
@@ -2888,14 +2946,13 @@ function goldIntro(){
   g.onclick=close; g._t=setTimeout(close,1900);
 }
 $("r-next").onclick=()=>{ closeO("o-result"); $("s-game").classList.remove("show-result"); sfx.click();
-  if(S.giveUp){ S.giveUp=false; const q=drawQuestion(null); if(q){ S.deck[S.qi]=q; loadQuestion(); return; } }
   S.qi++; S.qi>=S.deck.length?finish():loadQuestion(); };
 
 /* ---------- menu ---------- */
 $("g-menu").onclick=()=>openO("o-menu");
 $("m-close").onclick=()=>closeO("o-menu");
 $("o-menu").onclick=e=>{if(e.target.id==="o-menu")closeO("o-menu")};
-$("m-help").onclick=()=>{ closeO("o-menu"); if(S.tick){ S.pausedLeft=Math.max(0,S.deadline-Date.now()); stopTimer(); } else S.pausedLeft=null; openO("o-help"); };
+$("m-help").onclick=()=>{ $("help-8").hidden=!!S.fast; $("help-fichas").hidden=!S.fast; closeO("o-menu"); if(S.tick){ S.pausedLeft=Math.max(0,S.deadline-Date.now()); stopTimer(); } else S.pausedLeft=null; openO("o-help"); };
 function closeHelp(){ closeO("o-help"); if(S.pausedLeft!=null&&S.phase==="think"){ S.deadline=Date.now()+S.pausedLeft; S.tick=setInterval(updTimer,200); updTimer(); } S.pausedLeft=null; }
 $("help-close").onclick=closeHelp;
 $("o-help").onclick=e=>{ if(e.target.id==="o-help") closeHelp(); };
@@ -2944,32 +3001,42 @@ $("o-confirm").onclick=e=>{ if(e.target.id==="o-confirm") closeO("o-confirm"); }
 $("cf-ok").onclick=()=>{ store.set("matches",[]); closeO("o-confirm"); sfx.click(); renderRank(); toast("Ranking zerado"); };
 
 
-/* ================= NOVO TEMA e DESISTIR =================
+/* ================= NOVO TEMA e TROCAR PERGUNTA =================
    Novo tema: antes de abrir a primeira palavra, troca a pergunta por outra de um tema diferente e gira a roleta de novo.
-   Desistir: o grupo não faz ideia; mostra a resposta (ninguém pontua) e a próxima é uma pergunta nova no mesmo lugar (não gasta a partida). */
-function drawQuestion(excludeTheme){
-  const inDeck=new Set(S.deck.map(x=>x.id)), used=new Set(store.get("used",[]));
-  const pool=[]; THEMES.filter(t=>(S.random||S.themes.has(t.id))&&t.id!==excludeTheme).forEach(t=>t.qs.forEach((q,i)=>pool.push({id:t.id+":"+i,theme:t,q:q[0],a:q[1]})));
+   Trocar pergunta: outra do mesmo tema, sem mostrar a resposta. A trocada volta para o monte (não conta como jogada). */
+function drawQuestion(excludeTheme,onlyTheme){
+  const inDeck=new Set(S.deck.map(x=>x.id)), used=getUsed();
+  const themes=THEMES.filter(t=>onlyTheme?t.id===onlyTheme:((S.random||S.themes.has(t.id))&&t.id!==excludeTheme)); refreshExhausted(themes,used);
+  const pool=[]; themes.forEach(t=>t.qs.forEach((q,i)=>pool.push({id:t.id+":"+i,theme:t,q:q[0],a:q[1]})));
   let fresh=pool.filter(p=>!inDeck.has(p.id)&&!used.has(p.id)); if(!fresh.length) fresh=pool.filter(p=>!inDeck.has(p.id)); if(!fresh.length) return null;
-  const pick=fresh[Math.floor(Math.random()*fresh.length)]; used.add(pick.id); store.set("used",[...used]); return pick;
+  return fresh[Math.floor(Math.random()*fresh.length)];
 }
 function syncGroupBtns(){
-  const nt=$("b-newtheme"), gu=$("b-giveup"); if(!nt) return;
+  const nt=$("b-newtheme"); if(!nt) return;
   const live=$("s-game").classList.contains("on")&&!S.spinning&&(S.phase==="reveal"||S.phase==="think");
-  nt.disabled=!(live&&S.revealed===0&&S.phase==="reveal"); gu.disabled=!live;
-  if(gu.disabled) resetGiveUp();
+  nt.disabled=!(live&&S.revealed===0&&S.phase==="reveal"); $("b-swap").disabled=!live;
+  if($("b-swap").disabled) resetSwap();
 }
-function resetGiveUp(){ const gu=$("b-giveup"); clearTimeout(gu._t); gu.classList.remove("confirm"); gu.querySelector("span").textContent="Desistir"; }
 $("b-newtheme").onclick=()=>{
   if($("b-newtheme").disabled) return;
   if(!S.random&&S.themes.size<2){ toast("Só tem um tema escolhido nesta partida"); return; }
   const q=drawQuestion(S.deck[S.qi].theme.id); if(!q){ toast("Não há outra pergunta disponível"); return; }
   sfx.click(); S.deck[S.qi]=q; loadQuestion();
 };
-$("b-giveup").onclick=()=>{
-  const gu=$("b-giveup"); if(gu.disabled) return;
-  if(!gu.classList.contains("confirm")){ gu.classList.add("confirm"); gu.querySelector("span").textContent="Confirmar?"; sfx.click(); clearTimeout(gu._t); gu._t=setTimeout(resetGiveUp,3000); return; }
-  resetGiveUp(); stopTimer(); S.giveUp=true; sfx.timeout(); endQuestion(null);
+function resetSwap(){ const b=$("b-swap"); clearTimeout(b._t); b.classList.remove("confirm"); b.querySelector("span").textContent="Trocar pergunta"; }
+$("b-swap").onclick=()=>{
+  const b=$("b-swap"); if(b.disabled) return;
+  if(S.revealed>0&&!b.classList.contains("confirm")){ b.classList.add("confirm"); b.querySelector("span").textContent="Trocar?"; sfx.click(); if(!mqWide.matches) toast("Toque de novo para trocar a pergunta"); clearTimeout(b._t); b._t=setTimeout(resetSwap,3000); return; }
+  resetSwap();
+  const q=drawQuestion(null,S.deck[S.qi].theme.id); if(!q){ toast("Não há outra pergunta deste tema agora"); return; }
+  stopTimer(); sfx.click(); S.deck[S.qi]=q; S.quickSpin=true; loadQuestion(); toast("Pergunta trocada, mesmo tema");
+};
+
+/* ---------- ficha: palavra extra (a ampulheta continua correndo: decidir faz parte do tempo) ---------- */
+$("b-ficha").onclick=()=>{
+  const fb=$("b-ficha"); if(fb.disabled) return;
+  if(S.extra){ S.extra=false; S.phase="think"; sfx.click(); renderBoard(); renderHUD(); msg(""); return; }
+  S.extra=true; S.phase="reveal"; sfx.click(); renderBoard(); renderHUD(); msg("Ficha na mesa: toque em mais uma palavra","near");
 };
 
 /* ================= FINAL ================= */
