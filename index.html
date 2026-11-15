@@ -336,7 +336,7 @@ p{text-wrap:pretty}
 .timer{grid-area:timer;width:58px;display:flex;flex-direction:column;align-items:center;gap:1px}
 .timer svg{width:42px;height:58px;overflow:visible;transform-origin:50% 50%}
 .timer .frame{fill:var(--lav)}
-.timer .glass{fill:color-mix(in srgb,var(--lav) 12%,transparent);stroke:var(--lav);stroke-width:1.6}
+.timer .glass{fill:color-mix(in srgb,var(--lav) 22%,transparent);stroke:var(--lav);stroke-width:1.8}
 .timer .sand{fill:var(--pink)}
 .timer.warn .sand{fill:var(--bad)}
 .timer.warn .frame{fill:var(--bad)}
@@ -344,9 +344,9 @@ p{text-wrap:pretty}
 .timer .stream{stroke:var(--pink);stroke-width:1.8;stroke-dasharray:2 3;animation:fall .35s linear infinite}
 .timer.warn .stream{stroke:var(--bad)}
 .timer.idle .stream{display:none}
-.timer .tn{font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.timer .tn{font-weight:800;font-size:20px;font-variant-numeric:tabular-nums;color:var(--ink)}
 .timer.warn .tn{color:var(--bad)}
-.timer.idle{opacity:.45}
+.timer.idle{opacity:.85}
 .timer.warn svg{animation:wobble .5s ease-in-out infinite}
 .timer.flip svg{animation:flipH .55s ease-out}
 @keyframes fall{to{stroke-dashoffset:-5}}
@@ -625,9 +625,9 @@ body.in-game .theme-fab{display:none}
 .rail-timer{margin-top:auto;display:none;justify-content:center;padding:24px 0 6px}
 .rail-timer .timer{width:auto;flex-direction:row;align-items:center;gap:14px;animation:hgFloat 5.5s ease-in-out infinite}
 .rail-timer .timer svg{width:84px;height:112px}
-.rail-timer .timer .tn{font-family:var(--serif);font-weight:400;font-size:56px;line-height:1;min-width:1.4em;color:var(--ink)}
+.rail-timer .timer .tn{font-family:var(--serif);font-weight:400;font-size:92px;line-height:1;min-width:1.3em;color:var(--ink)}
 .rail-timer .timer.warn .tn{color:var(--bad)}
-.rail-timer .timer.idle{opacity:.55}
+.rail-timer .timer.idle{opacity:.92}
 
 @media (min-width:1001px){
   .rail-timer{display:flex}
@@ -635,7 +635,7 @@ body.in-game .theme-fab{display:none}
 }
 /* ampulheta na bancada (celular): número ao lado */
 .bancada .timer{width:auto;flex-direction:row;align-items:center;gap:6px}
-.bancada .timer .tn{font-size:18px}
+.bancada .timer .tn{font-size:30px;font-family:var(--serif);font-weight:400;line-height:1}
 /* folha Eu sei!: número à esquerda da ampulheta, alinhado ao título */
 .oos-head{align-items:center}
 .oos-timer{width:auto;flex-direction:row-reverse;align-items:center;gap:8px}
@@ -876,8 +876,10 @@ body.in-game .theme-fab{display:none}
   .rank-tabs button{flex:none}
 }
 
-#reset-used.confirm{color:var(--bad);font-weight:800}
-#reset-used[hidden]{display:none}
+.reset-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.reset-sum{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+#reset-used{min-height:40px;padding:0 14px;font-size:14px}
+#reset-used:disabled{opacity:.45}
 
 /* roleta: contador do ciclo de temas */
 .spin-count{display:flex;align-items:center;gap:10px;margin-top:8px;color:var(--screen-muted);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -885,6 +887,40 @@ body.in-game .theme-fab{display:none}
 .spin-count b{color:var(--screen-ink)}
 .spin-count i{display:block;width:90px;height:5px;border-radius:5px;background:color-mix(in srgb,var(--screen-ink) 14%,transparent);overflow:hidden}
 .spin-count em{display:block;height:100%;border-radius:5px;background:var(--screen-pink,var(--pink))}
+
+/* dica estilo forca */
+.hint-box{border-radius:16px;transition:background-color .3s}
+.hint-who b{color:var(--screen-ink)}
+.hint-mask b{font-weight:800}
+.hint-mask b.new{color:var(--screen-pink);display:inline-block;animation:letterPop .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes letterPop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.25)}100%{transform:none;opacity:1}}
+.hint-used{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.hint-used:empty{display:none}
+.hint-used span{min-width:28px;padding:3px 8px;border-radius:8px;font-weight:800;font-size:14px}
+.hint-used .ok{background:var(--ok-soft);color:var(--ok)}
+.hint-used .no{background:var(--bad-soft);color:var(--bad);text-decoration:line-through}
+.hint-abc{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:6px;margin:12px auto 0;max-width:580px}
+.hint-abc[hidden]{display:none}
+.hint-abc button{height:40px;border-radius:10px;background:var(--screen-chip);color:var(--screen-ink);font-weight:800;font-size:17px;box-shadow:0 0 0 1px var(--screen-line) inset;transition:background-color .12s,transform .12s}
+.hint-abc button:hover:not(:disabled){background:var(--screen-pink);color:#fff}
+.hint-abc button:active{transform:scale(.94)}
+.hint-abc button:disabled{opacity:.28;cursor:default}
+.hint-mask{letter-spacing:0;min-height:1.3em;line-height:1.3}
+.hint-mask i{display:inline-block;width:.78em;text-align:center;font-style:normal;font-weight:800}
+.hint-mask i.new{color:var(--screen-pink);animation:letterPop .5s cubic-bezier(.2,.8,.2,1)}
+.hint-info:empty{display:none}
+.hint-box.miss{animation:hintMiss .7s ease-out}
+.hint-box.hit{animation:hintHit .7s ease-out}
+@keyframes hintMiss{0%,100%{background:transparent}25%{background:color-mix(in srgb,var(--bad) 26%,transparent)}}
+@keyframes hintHit{0%,100%{background:transparent}25%{background:color-mix(in srgb,var(--ok) 20%,transparent)}}
+@media (max-width:1000px){ .hint-abc{grid-template-columns:repeat(7,minmax(0,1fr));gap:5px} .hint-abc button{height:34px;font-size:15px} }
+
+/* dica compacta e centralizada; sem letra achada, a linha da resposta some */
+.hint-box{margin-top:10px;padding:10px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.hint-box .hint-mask{margin-top:0;font-size:clamp(20px,2.2vw,30px)}
+.hint-box .hint-mask[hidden]{display:none}
+.hint-box .hint-used{margin-top:0}
+.hint-box .hint-abc{margin-top:4px}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -983,6 +1019,7 @@ body.in-game .theme-fab{display:none}
         <div class="field"><span class="field-label">Modo</span><div class="seg" id="seg-mode"><button data-m="0" aria-pressed="true">Clássico</button><button data-m="1" aria-pressed="false">Rápido · fichas</button></div><span class="level-note" id="mode-note"></span></div>
         <div class="field"><span class="field-label">Perguntas na partida</span><div class="seg" id="seg-total"></div></div>
         <div class="field"><span class="field-label">Tempo para responder</span><div class="seg" id="seg-time"></div></div>
+        <div class="field"><span class="field-label">Perguntas jogadas</span><div class="reset-row"><span class="reset-sum" id="played-sum">0 de 0</span><button class="btn btn-ghost" id="reset-used">Zerar e começar de novo</button></div><span class="level-note">As já jogadas não voltam até acabar o tema. Zerar faz todas valerem de novo.</span></div>
         <div class="toggle-row"><span><span class="t-main">Roleta antes da pergunta</span><span class="t-sub">Sorteio do tema e estrelas de dificuldade</span></span><button class="switch" id="sw-spin" role="switch" aria-checked="true" aria-label="Roleta antes da pergunta"></button></div>
         <div class="toggle-row" id="row-hints"><span><span class="t-main">Jogar com dicas</span><span class="t-sub" id="hints-sub">Uma por jogador na partida</span></span><button class="switch" id="sw-hints" role="switch" aria-checked="true" aria-label="Jogar com dicas"></button></div>
         <div class="toggle-row"><span class="t-main">Som e vibração</span><button class="switch" id="sw-sound" role="switch" aria-checked="true" aria-label="Som e vibração"></button></div>
@@ -993,7 +1030,6 @@ body.in-game .theme-fab{display:none}
       </div>
     </aside>
     <div class="setup-main">
-      <div class="sec-head"><h3 class="sec-title">Temas</h3><button class="btn-text" id="reset-used">Zerar perguntas jogadas</button></div>
       <div class="themes" id="themes"></div>
     </div>
   </div>
@@ -1027,7 +1063,7 @@ body.in-game .theme-fab{display:none}
     </div>
     <div class="eight-flash" id="eight-flash" role="status"></div>
     <div class="gold-intro" id="gold-intro" role="status"><div class="gi-coin">★</div><b>Pergunta de ouro</b><span>Última pergunta · vale o dobro</span></div>
-    <div class="hint-box" id="hint-box" hidden aria-live="polite"><div class="hint-who" id="hint-who"></div><div class="hint-mask" id="hint-mask"></div><div class="hint-info" id="hint-info"></div></div>
+    <div class="hint-box" id="hint-box" hidden aria-live="polite"><div class="hint-who" id="hint-who"></div><div class="hint-mask" id="hint-mask"></div><div class="hint-info" id="hint-info"></div><div class="hint-used" id="hint-used"></div><div class="hint-abc" id="hint-abc" hidden></div></div>
   </div>
 
   <div class="bancada" id="bancada">
@@ -1134,6 +1170,16 @@ body.in-game .theme-fab{display:none}
   <button class="btn-text sl-del" id="sl-del" hidden>Excluir sala</button>
 </div></div>
 
+<div class="overlay" id="o-reset"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="rs-title">
+  <div class="eyebrow">Perguntas</div>
+  <h2 id="rs-title">Zerar todas as perguntas?</h2>
+  <p class="lede" id="rs-text" style="margin-top:8px"></p>
+  <div class="row">
+    <button class="btn btn-ghost" id="rs-cancel">Cancelar</button>
+    <button class="btn btn-primary" id="rs-ok">Zerar</button>
+  </div>
+</div></div>
+
 <div class="overlay" id="o-confirm"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cf-title">
   <div class="eyebrow">Ranking</div>
   <h2 id="cf-title">Zerar o ranking?</h2>
@@ -1178,14 +1224,14 @@ body.in-game .theme-fab{display:none}
   <div class="eyebrow">Ajuda</div>
   <h2 id="help-title">Como jogar</h2>
   <div class="help-list">
-    <div><span class="hi">🎯</span><b>Como pontuar</b><p>Quem acerta leva 1 ponto por palavra que ainda estava escondida.</p></div>
+    <div><span class="hi">🎯</span><b>Como pontuar</b><p>Quem acerta leva 1 ponto por palavra que ainda estava escondida. Errar a resposta custa 1 ponto.</p></div>
     <div id="help-8"><span class="hi">🎱</span><b>A palavra 8</b><p>Só abre depois que todos jogarem uma vez. Quem abre e acerta ganha +8; se errar ou passar, perde 8 e os outros ganham 8.</p></div>
-    <div id="help-fichas" hidden><span class="hi">🪙</span><b>Fichas (modo Rápido)</b><p>Cada jogador tem fichas para a partida toda. Depois de abrir sua palavra, gaste 1 ficha para abrir mais uma (só 1 por vez). A palavra 8 é comum neste modo.</p></div>
+    <div id="help-fichas" hidden><span class="hi">🪙</span><b>Fichas (modo Rápido)</b><p>Cada jogador tem fichas para a partida toda. Depois de abrir sua palavra, gaste 1 ficha para abrir mais uma (só 1 por vez).</p></div>
     <div><span class="hi">🙋</span><b>Eu sei!</b><p>Uma vez por partida, antes de quem está na vez responder: acertou leva metade dos pontos; errou perde 8.</p></div>
     <div><span class="hi">★</span><b>Pergunta de ouro</b><p>A última pergunta da partida vale o dobro.</p></div>
-    <div><span class="hi">💡</span><b>Dica</b><p>Uma por jogador na partida: mostra a primeira letra e o tamanho da resposta para todos.</p></div>
+    <div><span class="hi">💡</span><b>Dica</b><p>Uma por jogador na partida, como na forca: escolha uma consoante (pediu, tem que escolher). Se a resposta tiver, ela aparece no lugar dela para todos; se não tiver, fica marcada em vermelho.</p></div>
     <div><span class="hi">🔄</span><b>Trocas</b><p>Cada jogador tem 2 trocas na partida, para usar na sua vez: Novo tema ou Trocar pergunta. A vez continua com quem trocou.</p></div>
-    <div><span class="hi">⏳</span><b>Escolher a palavra</b><p>Na sua vez, você tem 10 segundos para escolher uma palavra. Se não escolher, abre uma aleatória e começa o tempo de responder.</p></div>
+    <div><span class="hi">⏳</span><b>Escolher a palavra</b><p>Na sua vez, você tem 12 segundos para escolher uma palavra. Se não escolher, abre uma aleatória e começa o tempo de responder.</p></div>
     <div><span class="hi">⌨️</span><b>Atalhos</b><p>No teclado, digite o número da palavra e ela abre.</p></div>
   </div>
   <div class="row" style="grid-template-columns:1fr"><button class="btn btn-primary" id="help-close">Voltar ao jogo</button></div>
@@ -2123,7 +2169,7 @@ placeTimer();
     let R; try{ R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true}); }catch(e){ cv.remove(); return; }
     R.setPixelRatio(Math.min(2,devicePixelRatio||1)); R.outputColorSpace=THREE.SRGBColorSpace;
     const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(30,150/220,.1,50); cam.position.set(0,0,9.2);
-    scene.add(new THREE.HemisphereLight(0xffffff,0x6a5fa0,1.6));
+    scene.add(new THREE.HemisphereLight(0xffffff,0x6a5fa0,2.1));
     const dl=new THREE.DirectionalLight(0xffffff,2.2); dl.position.set(3,4,5); scene.add(dl);
     const rim=new THREE.DirectionalLight(0xff8ac4,1.2); rim.position.set(-4,-1,-3); scene.add(rim);
     const G=new THREE.Group(); scene.add(G); const body=new THREE.Group(); G.add(body);
@@ -2134,14 +2180,14 @@ placeTimer();
     const edgeM=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.18,side:THREE.BackSide});
     const edge=new THREE.Mesh(new THREE.LatheGeometry(prof.map(p=>new THREE.Vector2(p.x*1.02,p.y)),48),edgeM); body.add(edge);
     // tampas e colunas
-    const capM=new THREE.MeshStandardMaterial({color:0x5b44c9,roughness:.45,metalness:.15});
+    const capM=new THREE.MeshStandardMaterial({color:0x6a46ff,roughness:.35,metalness:.2,emissive:0x2b1580,emissiveIntensity:.35});
     const capGeo=new THREE.CylinderGeometry(1.15,1.15,.2,48);
     const capT=new THREE.Mesh(capGeo,capM); capT.position.y=1.68; body.add(capT);
     const capB=new THREE.Mesh(capGeo,capM); capB.position.y=-1.68; body.add(capB);
     const postGeo=new THREE.CylinderGeometry(.055,.055,3.2,12);
     for(let i=0;i<3;i++){ const a=i/3*Math.PI*2+.5; const p=new THREE.Mesh(postGeo,capM); p.position.set(Math.cos(a)*1.02,0,Math.sin(a)*1.02); body.add(p); }
     // areia
-    const sandM=new THREE.MeshStandardMaterial({color:0xf5c451,roughness:.85,metalness:0});
+    const sandM=new THREE.MeshStandardMaterial({color:0xf5c451,roughness:.6,metalness:0,emissiveIntensity:.55});
     /* areia de cima: sólido de revolução que acompanha o raio interno do vidro, do gargalo até o nível atual */
     const glassR=y=>{ const k=Math.abs(y)/1.55; return Math.max(.1,.12+.82*Math.pow(Math.sin(Math.min(1,k)*Math.PI/2),1.35)*(k>.94?1-(k-.94)*4:1)); };
     const TOPMAX=1.3, inR=y=>glassR(y)*.9-.02;
@@ -2152,9 +2198,9 @@ placeTimer();
     const botSand=new THREE.Mesh(new THREE.ConeGeometry(.82,.95,40).translate(0,.475,0),sandM); botSand.position.y=-1.56; body.add(botSand);
     const stream=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,1.5,8).translate(0,-.75,0),sandM); stream.position.y=.08; body.add(stream);
     /* cores do DS: areia no rosa do tema; nos 10 s finais tudo vira o vermelho de erro */
-    const C={sand:new THREE.Color(),bad:new THREE.Color(),cap:new THREE.Color(0x5b44c9),white:new THREE.Color(0xffffff),mode:""};
+    const C={sand:new THREE.Color(),bad:new THREE.Color(),cap:new THREE.Color(0x6a46ff),white:new THREE.Color(0xffffff),mode:""};
     function readColors(){ const m=document.documentElement.getAttribute("data-mode")||""; if(m===C.mode) return; C.mode=m;
-      const cs=getComputedStyle(document.documentElement); C.sand.set(cs.getPropertyValue("--pink").trim()||"#ff4f9a"); C.bad.set(cs.getPropertyValue("--bad").trim()||"#ff6b73"); }
+      const cs=getComputedStyle(document.documentElement); C.sand.set(cs.getPropertyValue("--pink").trim()||"#ff4f9a"); C.bad.set(cs.getPropertyValue("--bad").trim()||"#ff6b73"); C.cap.set(m==="dark"?"#8f74ff":"#6a46ff"); }
     function size(){ const w=cv.clientWidth||150, h=cv.clientHeight||220; R.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix(); }
     new ResizeObserver(size).observe(cv); size();
     host.classList.add("has-3d");
@@ -2176,10 +2222,10 @@ placeTimer();
       botSand.scale.set(Math.cbrt(b),b,Math.cbrt(b));
       stream.visible=!idle&&a>.01&&a<.999;
       readColors();
-      sandM.color.copy(warn?C.bad:C.sand);
+      sandM.color.copy(warn?C.bad:C.sand); sandM.emissive.copy(sandM.color);
       capM.color.copy(warn?C.bad:C.cap);
       glassM.color.copy(warn?C.bad:C.white); edgeM.color.copy(warn?C.bad:C.white);
-      glassM.opacity=idle?.14:warn?.3:.22;
+      glassM.opacity=idle?.26:warn?.36:.3;
       R.render(scene,cam);
     }
     requestAnimationFrame(frame);
@@ -2365,7 +2411,7 @@ function themeCount(t,used){ const n=playedIn(t,used), m=t.qs.length, all=n>=m;
   return `<span class="t-count${all?" all":""}">${all?"Tudo jogado · vai recomeçar":`${n} de ${m} jogadas`}</span><span class="t-bar" aria-hidden="true"><i style="width:${Math.round(n/m*100)}%"></i></span>`; }
 function renderThemes(){
   const used=getUsed();
-  { const b=$("reset-used"); b.hidden=!used.size; clearTimeout(b._t); b.classList.remove("confirm"); b.textContent="Zerar perguntas jogadas"; }
+  { const tot=THEMES.reduce((n,t)=>n+t.qs.length,0), n=THEMES.reduce((k,t)=>k+playedIn(t,used),0); $("played-sum").textContent=`${n} de ${tot}`; $("reset-used").disabled=!n; }
   $("themes").innerHTML=THEMES.map(t=>`
     <button class="theme" data-t="${t.id}" aria-pressed="${S.themes.has(t.id)}">
       <span class="t-emoji">${ic(t)}</span><span class="t-name">${t.nome}</span>${themeCount(t,used)}
@@ -2390,11 +2436,10 @@ function renderThemes(){
   syncStart();
 }
 /* zerar: todas as perguntas voltam para o monte (podem sair de novo as já jogadas) */
-$("reset-used").onclick=()=>{
-  const b=$("reset-used");
-  if(!b.classList.contains("confirm")){ b.classList.add("confirm"); b.textContent="Toque de novo para zerar todas"; sfx.click(); clearTimeout(b._t); b._t=setTimeout(()=>{ b.classList.remove("confirm"); b.textContent="Zerar perguntas jogadas"; },3500); return; }
-  store.set("used",[]); store.set("cycle",[]); store.set("cycleLast",null); sfx.pop(); renderThemes(); toast("Perguntas zeradas. Todas podem sair de novo");
-};
+$("reset-used").onclick=()=>{ if($("reset-used").disabled) return; const tot=THEMES.reduce((n,t)=>n+t.qs.length,0); $("rs-text").textContent=`As ${tot} perguntas voltam a valer, inclusive as que vocês já jogaram. O ranking, as salas e os jogadores não mudam.`; openO("o-reset"); };
+$("rs-cancel").onclick=()=>closeO("o-reset");
+$("o-reset").onclick=e=>{ if(e.target.id==="o-reset") closeO("o-reset"); };
+$("rs-ok").onclick=()=>{ store.set("used",[]); store.set("cycle",[]); store.set("cycleLast",null); closeO("o-reset"); sfx.pop(); renderThemes(); toast("Perguntas zeradas. Todas podem sair de novo"); };
 function seg(id,vals,cur,set,label){
   $(id).innerHTML=vals.map(v=>`<button data-v="${v}" aria-pressed="${v===cur}">${label(v)}</button>`).join("");
   $(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{
@@ -2421,7 +2466,7 @@ $("seg-level").querySelectorAll("button").forEach(b=>b.onclick=()=>{ S.level=b.d
 const fichasN=()=>Math.min(8,Math.round(S.total*.8));
 function syncMode(){
   $("seg-mode").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.m==="1")===S.fast));
-  $("mode-note").textContent=S.fast?`Cada jogador recebe ${fichasN()} fichas. Na sua vez, depois de abrir uma palavra, gaste 1 ficha para abrir mais uma (a ampulheta não para). A palavra 8 vira uma palavra comum.`:"";
+  $("mode-note").textContent=S.fast?`Cada jogador recebe ${fichasN()} fichas. Na sua vez, depois de abrir uma palavra, gaste 1 ficha para abrir mais uma (a ampulheta não para).`:"";
 }
 $("seg-mode").querySelectorAll("button").forEach(b=>b.onclick=()=>{ S.fast=b.dataset.m==="1"; store.set("fast",S.fast); syncMode(); sfx.click(); });
 
@@ -2469,7 +2514,7 @@ function startGame(){
   S.players.forEach(p=>{p.score=0;p.hint=hintsOn();p.oos=true;p.fichas=S.fast?fichasN():0;p.swaps=SWAPS});
   $("s-game").classList.toggle("fast",S.fast);
   $("s-game").classList.toggle("hard",hard());
-  S.deck=buildDeck(); S.qi=0; S.turnKey=null; S.indPos=null;
+  S.deck=buildDeck(); S.qi=0; S.t0=Date.now(); S.turnKey=null; S.indPos=null;
   show("s-game"); loadQuestion();
 }
 $("start").onclick=()=>{ac();sfx.right();startGame()};
@@ -2479,9 +2524,9 @@ function loadQuestion(){
   const d=S.deck[S.qi];
   S.tokens=tokenize(d.q);
   S.wordCount=S.tokens.filter(t=>t.word).length;
-  { let c=0; S.eightIdx=S.fast?-1:S.tokens.findIndex(t=>t.word&&++c===8); }
+  { let c=0; S.eightIdx=(S.fast||!EIGHT_ON)?-1:S.tokens.findIndex(t=>t.word&&++c===8); }
   S.extra=false; S.fichaAt=null;
-  S.revealed=0; S.attempts=[]; S.retried=false; S.hintShown=false; $("hint-box").hidden=true;
+  S.revealed=0; S.attempts=[]; S.retried=false; S.hintLetters=new Set(); S.hintTried=new Set(); S.hintPick=null; S.hintNew=null; $("hint-box").hidden=true;
   S.turnsTaken=0; S.eightBy=null; S.eightBonus=0; S.winPts=null; S.winTag="";
   closeO("o-result"); $("s-game").classList.remove("show-result");
   S.turn=S.keepTurn!=null?S.keepTurn:S.qi%S.players.length; S.keepTurn=null;
@@ -2550,9 +2595,11 @@ function renderHUD(){
       fb.disabled=S.extra?false:!(thinking&&p.fichas>0&&!spent&&S.revealed<S.wordCount);
       fb.querySelector(".fl").textContent=S.extra?"Cancelar":"Palavra extra";
       fb.title=S.extra?"Desistir da palavra extra (a ficha não é gasta)":!p.fichas?"Suas fichas acabaram":spent?"Só 1 ficha por vez":"Gastar 1 ficha e abrir mais uma palavra"; } }
-  $("b-hint").disabled=!(thinking&&p.hint&&!S.hintShown);
-  $("b-hint").textContent=S.hintShown?"💡 Aberta":p.hint?"💡 Dica":"💡 Usada";
-  $("b-hint").title=S.hintShown?"A dica já está no telão":p.hint?"Usar minha dica (só 1 na partida)":"Você já usou sua dica";
+  if(!thinking&&S.hintPick!=null) cancelHint();
+  const picking=S.hintPick!=null;
+  $("b-hint").disabled=!(thinking&&p.hint&&!picking);
+  $("b-hint").textContent=picking?"💡 Escolha":p.hint?"💡 Dica":"💡 Usada";
+  $("b-hint").title=picking?"Escolha uma consoante no telão":p.hint?"Usar minha dica: você escolhe uma consoante (só 1 na partida, não dá para voltar)":"Você já usou sua dica";
   inp.placeholder=thinking?`${p.name}, escreva sua resposta`:(VOICE?"Fale ou toque no número":"Revele uma palavra para responder");
   if(REC&&REC._mode!==micTarget()&&$("voice-layer").hidden) micStop(true);
   $("b-mic").disabled=!micTarget();
@@ -2818,6 +2865,8 @@ function showTurn(p,hint,ev,animate){
 }
 const BALL8=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#14111d"/><circle cx="32" cy="29.5" r="14.5" fill="#fff"/><g fill="none" stroke="#120C22" stroke-width="3.4"><circle cx="32" cy="24.4" r="4.2"/><circle cx="32" cy="33.9" r="5.3"/></g><ellipse cx="21" cy="14" rx="7" ry="3.4" fill="#fff" opacity=".28" transform="rotate(-32 21 14)"/></svg>`;
 const val8=()=>S.gold?16:8;
+const WRONG_PEN=1; /* chute errado custa 1 ponto (devolvido se o grupo aceitar a resposta) */
+const EIGHT_ON=false; /* palavra 8 desligada por enquanto: o código continua aqui para voltar depois */
 function eightLocked(){ return S.turnsTaken<S.players.length; }
 function reveal(i){
   if(S.spinning||S.phase!=="reveal"||S.tokens[i].open) return;
@@ -2863,7 +2912,7 @@ function setSand(f){
   b.setAttribute("y",69.5-h); b.setAttribute("height",h);
 }
 /* ---------- escolha da palavra: 10 s na ampulheta; acabou o tempo, abre uma palavra aleatória ---------- */
-const PICK_SEC=10;
+const PICK_SEC=12;
 function startPick(delay=0){
   clearTimeout(S.pickT);
   S.pickT=setTimeout(()=>{
@@ -2938,28 +2987,51 @@ $("a-form").onsubmit=e=>{
   const r=judge(txt,d);
   if(r==="ok"){ stopTimer(); const b8=S.eightBy===S.turn?val8():0; S.eightBonus=b8; S.winPts=worth()+b8; S.eightBy=null; p.score+=S.winPts; S.lastGuess=txt; inp.classList.add("right"); sfx.win(); confetti(); endQuestion(S.turn); return; }
   if(r==="near"&&!S.retried){ S.retried=true; sfx.tick(); msg("Quase! Confira como escreveu e envie de novo.","near"); shake(); inp.select(); return; }
-  stopTimer(); const pen8=S.eightBy===S.turn; S.attempts.push({pi:S.turn,text:txt,pts:worth(),eight:pen8?val8():0});
-  S.phase="wait"; sfx.wrong(); inp.classList.add("wrong"); shake(); msg(`Não é isso, ${p.name}!`,"bad");
+  stopTimer(); const pen8=S.eightBy===S.turn; S.attempts.push({pi:S.turn,text:txt,pts:worth(),eight:pen8?val8():0,pen:WRONG_PEN});
+  p.score-=WRONG_PEN; S.phase="wait"; sfx.wrong(); inp.classList.add("wrong"); shake(); msg(`Não é isso, ${p.name}! −${WRONG_PEN}`,"bad"); renderHUD();
   $("b-pass").disabled=$("b-answer").disabled=$("b-hint").disabled=true; inp.readOnly=true;
   const q=S.qi;
   const goOn=()=>{ inp.readOnly=false; inp.classList.remove("wrong"); if(S.phase==="wait"&&S.qi===q) nextTurn("wrong"); };
   if(pen8) setTimeout(()=>{ if(S.phase==="wait"&&S.qi===q){ eightPenalty(goOn); renderHUD(); } },700); else setTimeout(goOn,1200);
 };
 
-/* ---------- ficha de dica (1 por jogador na partida) ---------- */
-function hintMask(a){
-  let first=true, letters=0;
-  const out=[...a].map(ch=>{ if(/[\p{L}\d]/u.test(ch)){ letters++; const r=first?ch.toUpperCase():"_"; first=false; return r; } return ch===" "?"\u2003":ch; }).join(" ");
-  const words=a.trim().split(/\s+/).length;
-  return {out, info:`${words} ${words===1?"palavra":"palavras"} · ${letters} ${letters===1?"letra":"letras"}`};
+/* ---------- dica estilo forca (1 por jogador na partida) ----------
+   Quem usa escolhe uma letra no alfabeto. Tem: a letra aparece na resposta para todos. Não tem: fica marcada no vermelho de erro.
+   As letras de dicas de outros jogadores na mesma pergunta se somam. A vez continua de quem usou. */
+const ABC="BCDFGHJKLMNPQRSTVWXYZ".split(""); /* só consoantes */
+const foldL=c=>c.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase();
+function hintMask(a,letters){
+  /* cada caractere vira uma casa invisível do mesmo tamanho (espaço também), então não dá para contar letras nem palavras */
+  const out=[...a.trim()].map(ch=>{ const L=foldL(ch);
+    return /[\p{L}]/u.test(ch)&&letters.has(L)?`<i class="f${L===S.hintNew?" new":""}">${esc(ch.toUpperCase())}</i>`:"<i></i>"; }).join("");
+  return {out, info:""};
+}
+function renderHint(){
+  const d=S.deck[S.qi], h=hintMask(d.a,S.hintLetters), picking=S.hintPick!=null;
+  $("hint-mask").innerHTML=h.out; $("hint-mask").hidden=!S.hintLetters.size; $("hint-info").textContent=h.info;
+  $("hint-used").innerHTML=[...S.hintTried].map(l=>`<span class="${S.hintLetters.has(l)?"ok":"no"}">${l}</span>`).join("");
+  const abc=$("hint-abc"); abc.hidden=!picking;
+  if(picking){ abc.innerHTML=ABC.map(l=>`<button type="button" data-l="${l}" ${S.hintTried.has(l)?"disabled":""} aria-label="Letra ${l}">${l}</button>`).join("");
+    abc.querySelectorAll("[data-l]").forEach(b=>b.onclick=()=>pickLetter(b.dataset.l)); }
+  $("hint-box").hidden=!picking&&!S.hintTried.size;
+  fitBoard();
+}
+/* pediu a dica, tem que usar: se o tempo da vez acabar sem escolher, a dica se perde */
+function cancelHint(){ const p=S.players[S.hintPick]; S.hintPick=null; if(p) toast(`${p.name} não escolheu a letra a tempo e perdeu a dica`); if(S.hintTried.size) $("hint-who").textContent="Letras pedidas nesta pergunta"; renderHint(); }
+function pickLetter(l){
+  if(S.hintPick==null||S.hintTried.has(l)||S.phase!=="think") return;
+  const p=S.players[S.hintPick], a=S.deck[S.qi].a, n=[...a].filter(ch=>foldL(ch)===l).length;
+  S.hintPick=null; S.hintTried.add(l);
+  const box=$("hint-box"); box.classList.remove("hit","miss"); void box.offsetWidth;
+  if(n){ S.hintLetters.add(l); S.hintNew=l; box.classList.add("hit"); sfx.pop(); $("hint-who").innerHTML=`${p.emoji} ${esc(p.name)} pediu a letra <b>${l}</b>: tem ${n===1?"1":n}!`; }
+  else{ S.hintNew=null; box.classList.add("miss"); sfx.wrong(); $("hint-who").innerHTML=`${p.emoji} ${esc(p.name)} pediu a letra <b>${l}</b>: não tem`; }
+  renderHint(); renderHUD();
 }
 $("b-hint").onclick=()=>{
-  const p=S.players[S.turn]; if(S.phase!=="think"||!p.hint||S.hintShown) return;
-  p.hint=false; S.hintShown=true;
-  const h=hintMask(S.deck[S.qi].a);
-  $("hint-who").textContent=`${p.emoji} ${p.name} usou a dica. Todo mundo vê, mas a vez é dele.`;
-  $("hint-mask").textContent=h.out; $("hint-info").textContent=h.info;
-  $("hint-box").hidden=false; sfx.hint(); renderHUD();
+  const p=S.players[S.turn]; if(S.phase!=="think"||!p.hint||S.hintPick!=null) return;
+  p.hint=false; S.hintPick=S.turn; S.hintNew=null;
+  $("hint-who").innerHTML=`${p.emoji} ${esc(p.name)} usou a dica: escolha uma consoante`;
+  sfx.hint(); renderHint(); renderHUD();
 };
 
 /* ---------- confete ---------- */
@@ -3046,10 +3118,10 @@ function endQuestion(winner){
   if(winner!==null) $("r-kicker").textContent+=` escrevendo “${S.lastGuess}”`;
   const box=$("r-attempts");
   box.innerHTML=S.attempts.length?`<div class="lbl">Respostas que não passaram. Se o grupo concordar, dá para aceitar:</div>`+S.attempts.map((a,i)=>{const p=S.players[a.pi];
-    return `<div class="attempt"><span class="e">${p.emoji}</span><span class="txt"><b>${esc(p.name)}</b><br>${esc(a.text)}</span>${a.pts>0?`<button data-acc="${i}">Aceitar +${a.pts+(a.eight?2*a.eight:0)+(a.oos||0)}</button>`:""}</div>`}).join(""):"";
+    return `<div class="attempt"><span class="e">${p.emoji}</span><span class="txt"><b>${esc(p.name)}</b><br>${esc(a.text)}</span>${a.pts>0?`<button data-acc="${i}">Aceitar +${a.pts+(a.eight?2*a.eight:0)+(a.oos||0)+(a.pen||0)}</button>`:""}</div>`}).join(""):"";
   box.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>{const a=S.attempts[+b.dataset.acc];S.players[a.pi].score+=a.pts;
     if(a.eight) S.players.forEach((q,j)=>{ q.score+= j===a.pi?2*a.eight:-a.eight; });
-    if(a.oos) S.players[a.pi].score+=a.oos;b.disabled=true;b.textContent="Aceita ✓";sfx.pop();renderHUD();});
+    if(a.oos) S.players[a.pi].score+=a.oos; if(a.pen) S.players[a.pi].score+=a.pen;b.disabled=true;b.textContent="Aceita ✓";sfx.pop();renderHUD();});
   $("r-next").textContent=S.qi+1>=S.deck.length?"Ver placar final":"Próxima pergunta";
   setTimeout(()=>{ openO("o-result"); $("s-game").classList.add("show-result"); },winner!==null?1100:700);
 }
@@ -3066,7 +3138,7 @@ $("r-next").onclick=()=>{ closeO("o-result"); $("s-game").classList.remove("show
 $("g-menu").onclick=()=>openO("o-menu");
 $("m-close").onclick=()=>closeO("o-menu");
 $("o-menu").onclick=e=>{if(e.target.id==="o-menu")closeO("o-menu")};
-$("m-help").onclick=()=>{ $("help-8").hidden=!!S.fast; $("help-fichas").hidden=!S.fast; closeO("o-menu"); if(S.tick){ S.pausedLeft=Math.max(0,S.deadline-Date.now()); stopTimer(); } else S.pausedLeft=null; openO("o-help"); };
+$("m-help").onclick=()=>{ $("help-8").hidden=!!S.fast||!EIGHT_ON; $("help-fichas").hidden=!S.fast; closeO("o-menu"); if(S.tick){ S.pausedLeft=Math.max(0,S.deadline-Date.now()); stopTimer(); } else S.pausedLeft=null; openO("o-help"); };
 function closeHelp(){ closeO("o-help"); if(S.pausedLeft!=null&&canResume()){ S.deadline=Date.now()+S.pausedLeft; S.tick=setInterval(updTimer,200); updTimer(); } S.pausedLeft=null; }
 $("help-close").onclick=closeHelp;
 $("o-help").onclick=e=>{ if(e.target.id==="o-help") closeHelp(); };
@@ -3135,6 +3207,7 @@ $("go-players").onclick=()=>{
   $("sala-pill").textContent=x?`Sala ${x.name} · trocar`:"Sem sala · trocar";
   sfx.click(); renderPlayers(); show("s-players");
 };
+function fmtDur(ms){ const m=Math.max(1,Math.round(ms/60000)); return m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60} min`; }
 function getMatches(){ const m=store.get("matches",[]); return Array.isArray(m)?m:[]; }
 function rankTable(matches=getMatches()){
   const T=new Map();
@@ -3147,7 +3220,7 @@ function leaderId(rows){ return rows.length&&rows[0].wins>0&&!(rows[1]&&rows[1].
 function saveMatch(){
   const top=Math.max(...S.players.map(p=>p.score)); if(top<=0) return null;
   const before=leaderId(rankTable(scoped()));
-  const m={id:uid(),at:Date.now(),salaId:S.sala||null,players:S.players.map(p=>({id:p.id,name:p.name,emoji:p.emoji,score:p.score})),winners:S.players.filter(p=>p.score===top).map(p=>p.id)};
+  const m={id:uid(),at:Date.now(),durMs:S.t0?Date.now()-S.t0:null,salaId:S.sala||null,players:S.players.map(p=>({id:p.id,name:p.name,emoji:p.emoji,score:p.score})),winners:S.players.filter(p=>p.score===top).map(p=>p.id)};
   const all=getMatches(); all.push(m); store.set("matches",all.slice(-500));
   return {match:m,before,after:leaderId(rankTable(scoped()))};
 }
@@ -3158,7 +3231,7 @@ function renderRank(){
   $("rank-tabs").querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{ RTAB=b.dataset.r; sfx.click(); renderRank(); });
   const ms=scoped(RTAB), rows=rankTable(ms), box=$("rank-list"), n=ms.length, sl=RTAB&&salaById(RTAB);
   $("rank-reset").hidden=!n; $("rank-reset").textContent=sl?"Zerar ranking desta sala":"Zerar ranking";
-  $("rank-lede").textContent=(sl?`Só as partidas da sala ${sl.name}. `:salas.length?"Todas as partidas deste aparelho, de todas as salas. ":"")+(n?`${n} ${n===1?"partida registrada":"partidas registradas"}. Empate no topo conta vitória para todos que empataram.`:"Vitórias de cada jogador salvo. Empate no topo conta vitória para todos que empataram.");
+  $("rank-lede").textContent=(sl?`Só as partidas da sala ${sl.name}. `:salas.length?"Todas as partidas deste aparelho, de todas as salas. ":"")+(n?`${n} ${n===1?"partida registrada":"partidas registradas"}${(()=>{ const d=ms.map(m=>m.durMs).filter(Boolean); return d.length?`, ${fmtDur(d.reduce((a,b)=>a+b,0)/d.length)} em média`:""; })()}. Empate no topo conta vitória para todos que empataram.`:"Vitórias de cada jogador salvo. Empate no topo conta vitória para todos que empataram.");
   if(!rows.length){ box.innerHTML=`<div class="rank-empty"><b>Ninguém no pódio ainda</b>Jogue uma partida até o fim e as vitórias aparecem aqui.</div>`; return; }
   const lead=leaderId(rows); let pos=0,last=null;
   box.innerHTML=rows.map((t,i)=>{ if(t.wins!==last){pos=i+1;last=t.wins}
@@ -3248,7 +3321,7 @@ function finish(){
   const top=ranked[0].score, winners=ranked.filter(p=>p.score===top);
   $("f-title").textContent=top===0?"Ninguém pontuou":winners.length>1?"Empate no topo!":`${winners[0].name} venceu!`;
   $("f-crown").textContent="Fim de jogo";
-  { const n=S.qi>=S.deck.length?S.deck.length:S.qi+1; $("f-sub").textContent=`${n} ${n===1?"pergunta jogada":"perguntas jogadas"}`; }
+  { const n=S.qi>=S.deck.length?S.deck.length:S.qi+1; $("f-sub").textContent=`${n} ${n===1?"pergunta jogada":"perguntas jogadas"}${S.t0?` · ${fmtDur(Date.now()-S.t0)}`:""}`; }
   let pos=0,last=null; const posd=ranked.map((p,i)=>{ if(p.score!==last){pos=i+1;last=p.score} return pos; });
   const order=[1,0,2].filter(i=>ranked[i]), delay={0:.9,1:.45,2:0};
   $("podium3").innerHTML=order.map(i=>{ const p=ranked[i];
