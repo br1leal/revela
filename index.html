@@ -876,6 +876,16 @@ body.in-game .theme-fab{display:none}
   .rank-tabs button{flex:none}
 }
 
+#reset-used.confirm{color:var(--bad);font-weight:800}
+#reset-used[hidden]{display:none}
+
+/* roleta: contador do ciclo de temas */
+.spin-count{display:flex;align-items:center;gap:10px;margin-top:8px;color:var(--screen-muted);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.spin-count:empty{display:none}
+.spin-count b{color:var(--screen-ink)}
+.spin-count i{display:block;width:90px;height:5px;border-radius:5px;background:color-mix(in srgb,var(--screen-ink) 14%,transparent);overflow:hidden}
+.spin-count em{display:block;height:100%;border-radius:5px;background:var(--screen-pink,var(--pink))}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -983,6 +993,7 @@ body.in-game .theme-fab{display:none}
       </div>
     </aside>
     <div class="setup-main">
+      <div class="sec-head"><h3 class="sec-title">Temas</h3><button class="btn-text" id="reset-used">Zerar perguntas jogadas</button></div>
       <div class="themes" id="themes"></div>
     </div>
   </div>
@@ -1009,6 +1020,7 @@ body.in-game .theme-fab{display:none}
     <div class="board" id="board"></div>
     <div class="spin-layer" id="spin-layer" hidden aria-live="polite">
       <div class="spin-eyebrow" id="spin-eyebrow">Sorteando o tema</div>
+      <div class="spin-count" id="spin-count"></div>
       <div class="spin-track"><div class="spin-strip" id="spin-strip"></div><div class="spin-marker"><i></i></div></div>
       <div class="spin-result"><div class="spin-name" id="spin-name"></div><div class="stars" id="spin-stars"></div><div class="spin-diff" id="spin-diff"></div></div>
       <button type="button" class="spin-skip" id="spin-skip">Pular</button>
@@ -2353,6 +2365,7 @@ function themeCount(t,used){ const n=playedIn(t,used), m=t.qs.length, all=n>=m;
   return `<span class="t-count${all?" all":""}">${all?"Tudo jogado · vai recomeçar":`${n} de ${m} jogadas`}</span><span class="t-bar" aria-hidden="true"><i style="width:${Math.round(n/m*100)}%"></i></span>`; }
 function renderThemes(){
   const used=getUsed();
+  { const b=$("reset-used"); b.hidden=!used.size; clearTimeout(b._t); b.classList.remove("confirm"); b.textContent="Zerar perguntas jogadas"; }
   $("themes").innerHTML=THEMES.map(t=>`
     <button class="theme" data-t="${t.id}" aria-pressed="${S.themes.has(t.id)}">
       <span class="t-emoji">${ic(t)}</span><span class="t-name">${t.nome}</span>${themeCount(t,used)}
@@ -2376,6 +2389,12 @@ function renderThemes(){
   syncLevel(); syncMode();
   syncStart();
 }
+/* zerar: todas as perguntas voltam para o monte (podem sair de novo as já jogadas) */
+$("reset-used").onclick=()=>{
+  const b=$("reset-used");
+  if(!b.classList.contains("confirm")){ b.classList.add("confirm"); b.textContent="Toque de novo para zerar todas"; sfx.click(); clearTimeout(b._t); b._t=setTimeout(()=>{ b.classList.remove("confirm"); b.textContent="Zerar perguntas jogadas"; },3500); return; }
+  store.set("used",[]); store.set("cycle",[]); store.set("cycleLast",null); sfx.pop(); renderThemes(); toast("Perguntas zeradas. Todas podem sair de novo");
+};
 function seg(id,vals,cur,set,label){
   $(id).innerHTML=vals.map(v=>`<button data-v="${v}" aria-pressed="${v===cur}">${label(v)}</button>`).join("");
   $(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{
@@ -2431,7 +2450,7 @@ function buildDeck(){
     let c=ids.filter(k=>!cycle.has(k));
     if(!c.length){ cycle.clear(); c=ids; }
     if(c.length>1) c=c.filter(k=>k!==last);
-    const k=c[Math.floor(Math.random()*c.length)]; deck.push(by[k].pop()); cycle.add(k); last=k;
+    const k=c[Math.floor(Math.random()*c.length)], it=by[k].pop(); cycle.add(k); it.cyc={n:cycle.size,of:ids0.length}; deck.push(it); last=k;
   }
   store.set("cycle",[...cycle]); store.set("cycleLast",last);
   return deck;
@@ -2748,6 +2767,7 @@ function playSpin(d,done){
   for(let i=0;i<N;i++){ if(i===T){ items.push(secret?{secret:true}:d.theme); last=d.theme; continue; }
     let t; do{ t=pool[Math.floor(Math.random()*pool.length)]; }while(pool.length>2&&(t===last||(i===T-1||i===T+1)&&t===d.theme)); items.push(t); last=t; }
   strip.innerHTML=items.map((t,i)=>t.secret?`<div class="spin-card secret" data-i="${i}"><span class="se">🔒</span><span class="sn">Tema secreto</span></div>`:`<div class="spin-card" data-i="${i}"><span class="se">${ic(t)}</span><span class="sn">${esc(t.nome)}</span></div>`).join("");
+  { const cy=d.cyc; $("spin-count").innerHTML=cy&&cy.of>1?`<span><b>${cy.n}</b> de ${cy.of} temas</span><i aria-hidden="true"><em style="width:${Math.round(cy.n/cy.of*100)}%"></em></i>`:""; $("spin-count").title=cy&&cy.of>1?"Os temas só repetem depois que todos passarem":""; }
   $("spin-eyebrow").textContent=quick?"Nova pergunta do mesmo tema":secret?"Nível difícil":"Sorteando o tema";
   $("spin-name").classList.remove("on"); $("spin-name").textContent=""; $("spin-stars").innerHTML=starsHTML(n,false); $("spin-diff").textContent="";
   L.hidden=false; L.classList.remove("out","done");
@@ -3196,7 +3216,7 @@ function needConfirm(b,label,mob){
 /* gasta a troca de quem está na vez; a vez continua com ele na pergunta nova */
 function useSwap(q,quick,txt){
   const p=S.players[S.turn]; p.swaps--; resetSwap(); stopTimer(); sfx.click();
-  S.extra=false; S.deck[S.qi]=q; S.quickSpin=quick; S.keepTurn=S.turn; loadQuestion();
+  S.extra=false; q.cyc=S.deck[S.qi].cyc; S.deck[S.qi]=q; S.quickSpin=quick; S.keepTurn=S.turn; loadQuestion();
   toast(`${txt} · ${p.swaps?`${p.name} ainda tem ${p.swaps} ${p.swaps===1?"troca":"trocas"}`:`${p.name} usou as 2 trocas`}`);
 }
 $("b-newtheme").onclick=()=>{
