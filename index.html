@@ -841,6 +841,40 @@ body.in-game .theme-fab{display:none}
   #b-ficha.armed .fl{display:inline}
 }
 
+/* nível da pergunta ao lado do tema */
+.g-tw{display:flex;align-items:center;gap:12px;min-width:0}
+.g-head .g-stars{margin:0;flex:none;gap:2px}
+.g-head .g-stars:empty{display:none}
+.g-head .g-stars .st{width:16px;height:16px;color:color-mix(in srgb,var(--ink) 16%,transparent)}
+.g-head .g-stars .st.on{color:var(--sand);animation:starPop .45s cubic-bezier(.2,.8,.2,1) backwards}
+.g-head .g-stars .st:nth-child(2){animation-delay:.05s}.g-head .g-stars .st:nth-child(3){animation-delay:.1s}.g-head .g-stars .st:nth-child(4){animation-delay:.15s}.g-head .g-stars .st:nth-child(5){animation-delay:.2s}
+/* trocas: contador em cada botão */
+.g-act{position:relative}
+.g-badge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--pink-soft);color:var(--pink-ink);font-size:12px;font-weight:800;display:inline-grid;place-items:center;font-variant-numeric:tabular-nums}
+.g-act.confirm .g-badge{display:none}
+/* salas */
+.theme.sala .t-emoji{font-size:22px;letter-spacing:1px}
+.theme.sala.add{background:transparent;box-shadow:none;outline:1.5px dashed var(--line-2);outline-offset:-1.5px}
+.theme.sala.add .t-emoji{color:var(--pink);font-weight:800;font-size:26px}
+.theme.sala.add:hover{outline-color:var(--pink)}
+.salas.editing .theme.sala{outline:1.5px dashed var(--pink);outline-offset:-1.5px}
+.sala-pill{display:inline-flex;margin-top:14px;padding:7px 14px;border-radius:999px;background:var(--pink-soft);color:var(--pink-ink);font-weight:700;font-size:13px}
+.sala-pill:empty{display:none}
+.sl-del{display:block;margin:14px auto 0;color:var(--bad)}
+.sl-del.confirm{font-weight:800}
+.rank-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;max-width:720px}
+.rank-tabs[hidden]{display:none}
+.rank-tabs button{min-height:38px;padding:0 16px;border-radius:999px;background:var(--surface);box-shadow:0 0 0 1px var(--line) inset;font-weight:700;font-size:14px;color:var(--ink)}
+.rank-tabs button[aria-selected="true"]{background:var(--pink);color:#fff;box-shadow:none}
+.fr-sala{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink);margin-bottom:4px}
+@media (max-width:1000px){
+  .g-tw{flex-direction:column;align-items:flex-start;gap:3px}
+  .g-head .g-stars .st{width:11px;height:11px}
+  .g-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;font-size:11px;box-shadow:0 0 0 2px var(--bg)}
+  .rank-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px 12px;padding:0 16px}
+  .rank-tabs button{flex:none}
+}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -874,15 +908,37 @@ body.in-game .theme-fab{display:none}
   </div>
 </section>
 
-<!-- ================= JOGADORES ================= -->
-<section class="screen" id="s-players">
+<!-- ================= SALA ================= -->
+<section class="screen" id="s-sala">
   <div class="setup">
     <aside class="setup-aside">
       <button class="back" data-back="s-home"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Início</button>
       <div class="aside-head">
-        <div class="steps-mini"><span class="dot on"></span><span class="dot"></span><span><b>1</b> de 2</span></div>
+        <div class="steps-mini"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span><b>1</b> de 3</span></div>
+        <h2 class="display" style="margin-top:14px">Em qual sala?</h2>
+        <p class="lede">Cada sala tem o seu ranking e lembra quem costuma jogar. Uma sala não mexe na outra, e o ranking geral soma todas.</p>
+      </div>
+      <div class="aside-actions">
+        <button class="btn btn-primary btn-lg" id="go-players">Escolher jogadores</button>
+      </div>
+    </aside>
+    <div class="setup-main">
+      <div class="sec-head"><h3 class="sec-title">Salas</h3><button class="btn-text" id="sala-edit" aria-pressed="false">Editar</button></div>
+      <div class="themes salas" id="salas"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= JOGADORES ================= -->
+<section class="screen" id="s-players">
+  <div class="setup">
+    <aside class="setup-aside">
+      <button class="back" data-back="s-sala"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Sala</button>
+      <div class="aside-head">
+        <div class="steps-mini"><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span><b>2</b> de 3</span></div>
         <h2 class="display" style="margin-top:14px">Quem vai jogar?</h2>
         <p class="lede">De 2 a 5 jogadores, na ordem das vezes. Toque nos salvos para chamar ou adicione alguém novo.</p>
+        <button class="sala-pill" id="sala-pill" data-back="s-sala"></button>
       </div>
       <div class="aside-actions">
         <button class="btn btn-primary btn-lg" id="go-themes">Escolher temas</button>
@@ -906,7 +962,7 @@ body.in-game .theme-fab{display:none}
     <aside class="setup-aside">
       <button class="back" data-back="s-players"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Jogadores</button>
       <div class="aside-head">
-        <div class="steps-mini"><span class="dot on"></span><span class="dot on"></span><span><b>2</b> de 2</span></div>
+        <div class="steps-mini"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span><b>3</b> de 3</span></div>
         <h2 class="display" style="margin-top:14px">Sobre o que vamos jogar?</h2>
         <p class="lede">Escolha um ou mais temas, ou deixe a sorte decidir.</p>
       </div>
@@ -934,11 +990,11 @@ body.in-game .theme-fab{display:none}
 <!-- ================= PARTIDA ================= -->
 <section class="screen" id="s-game">
   <header class="g-head">
-    <div class="g-theme" id="g-theme"></div>
+    <div class="g-tw"><div class="g-theme" id="g-theme"></div><span class="g-stars" id="g-stars"></span></div>
     <div class="g-prog"><span class="gold-tag">★ <span class="gt-long">Pergunta de ouro · </span>2x</span><span class="g-level">Difícil</span><div class="segs" id="g-segs" aria-hidden="true"></div><span id="g-count">1/10</span></div>
     <div class="g-tools">
-      <button class="g-act" id="b-newtheme" title="Sortear outro tema (antes de abrir a primeira palavra)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 6.5A6.5 6.5 0 1 0 16.4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 2.8v3.9h-3.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Novo tema</span></button>
-      <button class="g-act" id="b-swap" title="Trocar por outra pergunta do mesmo tema, sem ver a resposta"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6.5h11.5M11.5 3.5l3 3-3 3M17 13.5H5.5M8.5 10.5l-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Trocar pergunta</span></button>
+      <button class="g-act" id="b-newtheme" title="Sortear outro tema (gasta 1 das suas 2 trocas)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 6.5A6.5 6.5 0 1 0 16.4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 2.8v3.9h-3.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Novo tema</span><b class="g-badge" aria-hidden="true">2</b></button>
+      <button class="g-act" id="b-swap" title="Outra pergunta do mesmo tema, sem ver a resposta (gasta 1 das suas 2 trocas)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6.5h11.5M11.5 3.5l3 3-3 3M17 13.5H5.5M8.5 10.5l-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Trocar pergunta</span><b class="g-badge" aria-hidden="true">2</b></button>
       <button class="icon-btn theme-btn" data-theme-toggle aria-label="Alternar modo claro e escuro"><svg class="sun" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 1.8v2.2M10 16v2.2M1.8 10H4M16 10h2.2M4.2 4.2l1.6 1.6M14.2 14.2l1.6 1.6M4.2 15.8l1.6-1.6M14.2 5.8l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
       <button class="icon-btn" id="b-report" aria-label="Reportar problema nesta pergunta" title="Reportar problema nesta pergunta"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M5 17V3.5m0 0h8.5l-1.6 3 1.6 3H5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button class="icon-btn" id="g-menu" aria-label="Menu da partida"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4 6h12M4 10h12M4 14h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
@@ -948,7 +1004,7 @@ body.in-game .theme-fab{display:none}
   <div class="rail"><div class="rail-list" id="g-scores" aria-label="Placar"></div><div class="rail-timer" id="rail-timer"></div></div>
 
   <div class="tela">
-    <div class="tela-head"><span><span class="g-stars" id="g-stars" aria-hidden="true"></span><span id="g-words">0 palavras</span></span><span class="worth" id="g-worth">vale 0</span></div>
+    <div class="tela-head"><span><span id="g-words">0 palavras</span></span><span class="worth" id="g-worth">vale 0</span></div>
     <div class="board" id="board"></div>
     <div class="spin-layer" id="spin-layer" hidden aria-live="polite">
       <div class="spin-eyebrow" id="spin-eyebrow">Sorteando o tema</div>
@@ -1018,7 +1074,7 @@ body.in-game .theme-fab{display:none}
         <button class="btn-text" id="rank-reset">Zerar ranking</button>
       </div>
     </aside>
-    <div class="setup-main"><div class="rank-list" id="rank-list"></div></div>
+    <div class="setup-main"><div class="rank-tabs" id="rank-tabs" role="tablist" aria-label="Qual ranking"></div><div class="rank-list" id="rank-list"></div></div>
   </div>
 </section>
 
@@ -1054,10 +1110,21 @@ body.in-game .theme-fab{display:none}
   </div>
 </div></div>
 
+<div class="overlay" id="o-sala"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sl-title">
+  <div class="eyebrow">Sala</div>
+  <h2 id="sl-title">Nova sala</h2>
+  <input id="sl-name" class="pl-name" maxlength="24" autocomplete="off" placeholder="Ex.: Casal, Família, Amigos" aria-label="Nome da sala">
+  <div class="row">
+    <button class="btn btn-ghost" id="sl-cancel">Cancelar</button>
+    <button class="btn btn-primary" id="sl-save">Criar sala</button>
+  </div>
+  <button class="btn-text sl-del" id="sl-del" hidden>Excluir sala</button>
+</div></div>
+
 <div class="overlay" id="o-confirm"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cf-title">
   <div class="eyebrow">Ranking</div>
   <h2 id="cf-title">Zerar o ranking?</h2>
-  <p class="lede" style="margin-top:8px">Apaga o histórico de partidas deste aparelho. Os jogadores salvos continuam.</p>
+  <p class="lede" id="cf-text" style="margin-top:8px">Apaga o histórico de partidas deste aparelho. Os jogadores salvos continuam.</p>
   <div class="row">
     <button class="btn btn-ghost" id="cf-cancel">Cancelar</button>
     <button class="btn btn-primary" id="cf-ok">Zerar</button>
@@ -1104,6 +1171,7 @@ body.in-game .theme-fab{display:none}
     <div><span class="hi">🙋</span><b>Eu sei!</b><p>Uma vez por partida, antes de quem está na vez responder: acertou leva metade dos pontos; errou perde 8.</p></div>
     <div><span class="hi">★</span><b>Pergunta de ouro</b><p>A última pergunta da partida vale o dobro.</p></div>
     <div><span class="hi">💡</span><b>Dica</b><p>Uma por jogador na partida: mostra a primeira letra e o tamanho da resposta para todos.</p></div>
+    <div><span class="hi">🔄</span><b>Trocas</b><p>Cada jogador tem 2 trocas na partida, para usar na sua vez: Novo tema ou Trocar pergunta. A vez continua com quem trocou.</p></div>
     <div><span class="hi">⌨️</span><b>Atalhos</b><p>No teclado, digite o número da palavra e ela abre.</p></div>
   </div>
   <div class="row" style="grid-template-columns:1fr"><button class="btn btn-primary" id="help-close">Voltar ao jogo</button></div>
@@ -2130,7 +2198,7 @@ function toast(msg,act){
   t.classList.add("on"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("on"),(act&&act.ms)||1800);
 }
 
-$("go-setup").onclick=()=>{ac();sfx.click();renderPlayers();show("s-players")};
+$("go-setup").onclick=()=>{ac();sfx.click();openSalas()};
 $("go-fs").onclick=()=>{const d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||(()=>{})).call(d)};
 
 /* ================= JOGADORES =================
@@ -2374,7 +2442,8 @@ function startGame(){
   { const a=ac(); if(a) loadErr(a).catch(()=>{}); }
   S.players=tablePlayers();
   const now=Date.now(); R.table.forEach(id=>{const r=byId(id); if(r) r.lastPlayedAt=now}); saveR();
-  S.players.forEach(p=>{p.score=0;p.hint=hintsOn();p.oos=true;p.fichas=S.fast?fichasN():0});
+  S.sala=SALA; if(SALA){ const l=getSalas(), sl=l.find(x=>x.id===SALA); if(sl){ sl.members=[...R.table]; sl.lastUsedAt=now; saveSalas(l); } }
+  S.players.forEach(p=>{p.score=0;p.hint=hintsOn();p.oos=true;p.fichas=S.fast?fichasN():0;p.swaps=SWAPS});
   $("s-game").classList.toggle("fast",S.fast);
   $("s-game").classList.toggle("hard",hard());
   S.deck=buildDeck(); S.qi=0; S.turnKey=null; S.indPos=null;
@@ -2392,7 +2461,7 @@ function loadQuestion(){
   S.revealed=0; S.attempts=[]; S.retried=false; S.hintShown=false; $("hint-box").hidden=true;
   S.turnsTaken=0; S.eightBy=null; S.eightBonus=0; S.winPts=null; S.winTag="";
   closeO("o-result"); $("s-game").classList.remove("show-result");
-  S.turn=S.qi%S.players.length;
+  S.turn=S.keepTurn!=null?S.keepTurn:S.qi%S.players.length; S.keepTurn=null;
   S.phase="reveal";
   S.gold=S.deck.length>1&&S.qi===S.deck.length-1;
   S.pendingEv={type:"new",q:S.qi+1,gold:S.gold};
@@ -2403,9 +2472,9 @@ function loadQuestion(){
     :`<span class="ti">${ic(d.theme)}</span><span class="tn">${esc(d.theme.nome)}</span>`;
   $("g-count").textContent=`${S.qi+1} de ${S.deck.length}`;
   $("g-segs").innerHTML=S.deck.map((_,i)=>`<i class="${i<S.qi?"done":i===S.qi?"now":""}${S.deck.length>1&&i===S.deck.length-1?" gold":""}"></i>`).join("");
-  S.spinning=!!S.spin;
+  S.spinning=!!S.spin; $("g-stars").innerHTML="";
   renderBoard(); renderHUD();
-  playSpin(d,()=>{ S.spinning=false; renderHUD(); syncGroupBtns(); if(S.gold) goldIntro(); });
+  playSpin(d,()=>{ S.spinning=false; setHStars(d); renderHUD(); syncGroupBtns(); if(S.gold) goldIntro(); });
 }
 function worth(){return (S.wordCount-S.revealed)*(S.gold?2:1)}
 function renderBoard(justIdx=-1, endAll=false){
@@ -2663,10 +2732,11 @@ const DIFF_LABEL=["","Moleza","Fácil","Médio","Difícil","Cabeludo"];
 function getDiff(d){ const s=DIFF[d.theme.id], i=+String(d.id).split(":")[1], v=s?+s[i]:0; return v>=1&&v<=5?v:3; }
 const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.85 6.05 6.6.78-4.88 4.53 1.3 6.53L12 17.2l-5.87 3.29 1.3-6.53L2.55 9.43l6.6-.78z" fill="currentColor"/></svg>';
 function starsHTML(n,lit){ return [1,2,3,4,5].map(i=>`<span class="st ${lit&&i<=n?"on":""}">${STAR}</span>`).join(""); }
+/* estrelas da pergunta ao lado do tema (aparecem depois da roleta, para não estragar a surpresa) */
+function setHStars(d){ const n=getDiff(d), g=$("g-stars"); g.innerHTML=starsHTML(n,true); g.title=`Dificuldade ${n} de 5 · ${DIFF_LABEL[n]}`; g.setAttribute("aria-label",g.title); g.setAttribute("role","img"); }
 function spinPool(){ const p=S.random?THEMES:THEMES.filter(t=>S.themes.has(t.id)); return p.length?p:THEMES; }
 function playSpin(d,done){
   const L=$("spin-layer"), strip=$("spin-strip"), n=getDiff(d), secret=hard();
-  $("g-stars").innerHTML=starsHTML(n,true); $("g-stars").setAttribute("title",`Dificuldade ${n} de 5 · ${DIFF_LABEL[n]}`);
   if(!S.spin){ done(); return; }
   const quick=!!S.quickSpin; S.quickSpin=false;
   const pool=spinPool(), reduce=matchMedia("(prefers-reduced-motion: reduce)").matches, spinIt=pool.length>1&&!reduce&&!quick;
@@ -2962,6 +3032,65 @@ $("m-end").onclick=()=>{ closeO("o-menu"); stopTimer(); finish(); };
 /* ================= RANKING (local) =================
    revela:matches = [{id, at, players:[{id,name,emoji,score}], winners:[id]}]  · mesmo formato que vai para o Supabase.
    Vitória: maior pontuação da partida (empate no topo = vitória para todos). Partida sem pontos não conta. */
+/* ================= SALAS =================
+   revela:salas = [{id,name,createdAt,lastUsedAt,members:[ids]}] · revela:sala = sala escolhida ("" = sem sala).
+   Cada partida salva leva salaId. Ranking da sala = só as partidas dela; ranking geral = todas (com e sem sala). */
+const getSalas=()=>{ const l=store.get("salas",[]); return Array.isArray(l)?l:[]; };
+const saveSalas=l=>store.set("salas",l);
+const salaById=id=>getSalas().find(x=>x.id===id)||null;
+let SALA=store.get("sala",""); if(SALA&&!salaById(SALA)) SALA="";
+let RTAB="", salaEditing=false, salaEditId=null;
+function scoped(id=S.sala){ const m=getMatches(); return id?m.filter(x=>x.salaId===id):m; }
+function setSala(id){ SALA=id; store.set("sala",id); }
+function openSalas(){ salaEditing=false; renderSalas(); show("s-sala"); }
+function renderSalas(){
+  const l=getSalas().slice().sort((a,b)=>(b.lastUsedAt||b.createdAt)-(a.lastUsedAt||a.createdAt)), ms=getMatches();
+  const card=x=>{ const n=ms.filter(m=>m.salaId===x.id).length, em=x.members.map(byId).filter(Boolean).map(r=>r.emoji).slice(0,5).join("");
+    return `<button class="theme sala" data-s="${x.id}" aria-pressed="${!salaEditing&&SALA===x.id}"><span class="t-emoji">${em||"🏠"}</span><span class="t-name">${esc(x.name)}</span><span class="t-count">${salaEditing?"Toque para editar":n?`${n} ${n===1?"partida":"partidas"}`:"Nenhuma partida ainda"}</span></button>`; };
+  $("salas").innerHTML=l.map(card).join("")
+    +(salaEditing?"":`<button class="theme sala add" id="sala-new"><span class="t-emoji">＋</span><span class="t-name">Nova sala</span><span class="t-count">Ex.: Casal, Família, Amigos</span></button>`)
+    +(salaEditing?"":`<button class="theme sala none" data-s="" aria-pressed="${!SALA}"><span class="t-emoji">🌐</span><span class="t-name">Sem sala</span><span class="t-count">Conta só no ranking geral</span></button>`);
+  $("salas").classList.toggle("editing",salaEditing);
+  $("sala-edit").hidden=!l.length; $("sala-edit").setAttribute("aria-pressed",salaEditing); $("sala-edit").textContent=salaEditing?"Pronto":"Editar";
+  $("go-players").disabled=salaEditing;
+  $("salas").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{
+    if(salaEditing&&b.dataset.s){ openSala(b.dataset.s); return; }
+    setSala(b.dataset.s); sfx.click(); renderSalas();
+  });
+  if($("sala-new")) $("sala-new").onclick=()=>openSala(null);
+}
+function openSala(id){
+  salaEditId=id; const x=id&&salaById(id);
+  $("sl-title").textContent=x?"Editar sala":"Nova sala"; $("sl-save").textContent=x?"Salvar":"Criar sala";
+  $("sl-name").value=x?x.name:""; const d=$("sl-del"); d.hidden=!x; d.textContent="Excluir sala"; d.classList.remove("confirm");
+  openO("o-sala"); setTimeout(()=>$("sl-name").focus(),60);
+}
+function saveSala(){
+  const name=$("sl-name").value.trim().replace(/\s+/g," "); if(!name){ toast("Dê um nome para a sala"); $("sl-name").focus(); return; }
+  const l=getSalas(), key=v=>v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  if(l.some(x=>x.id!==salaEditId&&key(x.name)===key(name))){ toast("Já existe uma sala com esse nome"); return; }
+  if(salaEditId){ const x=l.find(v=>v.id===salaEditId); if(x) x.name=name; }
+  else{ const x={id:uid(),name,createdAt:Date.now(),lastUsedAt:Date.now(),members:[]}; l.push(x); setSala(x.id); }
+  saveSalas(l); closeO("o-sala"); sfx.pop(); renderSalas(); toast(salaEditId?"Sala renomeada":`Sala “${name}” criada`);
+}
+$("sl-save").onclick=saveSala;
+$("sl-name").onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); saveSala(); } };
+$("sl-cancel").onclick=()=>closeO("o-sala");
+$("o-sala").onclick=e=>{ if(e.target.id==="o-sala") closeO("o-sala"); };
+$("sl-del").onclick=()=>{
+  const d=$("sl-del");
+  if(!d.classList.contains("confirm")){ d.classList.add("confirm"); d.textContent="Toque de novo para excluir (o ranking dela some, o geral continua)"; return; }
+  saveSalas(getSalas().filter(x=>x.id!==salaEditId)); if(SALA===salaEditId) setSala("");
+  closeO("o-sala"); sfx.click(); if(!getSalas().length) salaEditing=false; renderSalas(); toast("Sala excluída");
+};
+$("sala-edit").onclick=()=>{ salaEditing=!salaEditing; sfx.click(); renderSalas(); };
+$("go-players").onclick=()=>{
+  if(salaEditing) return;
+  const x=SALA&&salaById(SALA);
+  if(x&&x.members.length){ const ids=x.members.filter(id=>byId(id)).slice(0,MAX_TABLE); if(ids.length){ R.table=ids; saveR(); } }
+  $("sala-pill").textContent=x?`Sala ${x.name} · trocar`:"Sem sala · trocar";
+  sfx.click(); renderPlayers(); show("s-players");
+};
 function getMatches(){ const m=store.get("matches",[]); return Array.isArray(m)?m:[]; }
 function rankTable(matches=getMatches()){
   const T=new Map();
@@ -2973,15 +3102,19 @@ function rankTable(matches=getMatches()){
 function leaderId(rows){ return rows.length&&rows[0].wins>0&&!(rows[1]&&rows[1].wins===rows[0].wins)?rows[0].id:null; }
 function saveMatch(){
   const top=Math.max(...S.players.map(p=>p.score)); if(top<=0) return null;
-  const before=leaderId(rankTable());
-  const m={id:uid(),at:Date.now(),players:S.players.map(p=>({id:p.id,name:p.name,emoji:p.emoji,score:p.score})),winners:S.players.filter(p=>p.score===top).map(p=>p.id)};
+  const before=leaderId(rankTable(scoped()));
+  const m={id:uid(),at:Date.now(),salaId:S.sala||null,players:S.players.map(p=>({id:p.id,name:p.name,emoji:p.emoji,score:p.score})),winners:S.players.filter(p=>p.score===top).map(p=>p.id)};
   const all=getMatches(); all.push(m); store.set("matches",all.slice(-500));
-  return {match:m,before,after:leaderId(rankTable())};
+  return {match:m,before,after:leaderId(rankTable(scoped()))};
 }
 function renderRank(){
-  const rows=rankTable(), box=$("rank-list"), n=getMatches().length;
-  $("rank-reset").hidden=!n;
-  $("rank-lede").textContent=n?`${n} ${n===1?"partida registrada":"partidas registradas"} neste aparelho. Empate no topo conta vitória para todos que empataram.`:"Vitórias de cada jogador salvo. Empate no topo conta vitória para todos que empataram.";
+  const salas=getSalas(); if(RTAB&&!salas.some(x=>x.id===RTAB)) RTAB="";
+  $("rank-tabs").innerHTML=[{id:"",name:"Geral"},...salas].map(t=>`<button role="tab" data-r="${t.id}" aria-selected="${t.id===RTAB}">${esc(t.name)}</button>`).join("");
+  $("rank-tabs").hidden=!salas.length;
+  $("rank-tabs").querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{ RTAB=b.dataset.r; sfx.click(); renderRank(); });
+  const ms=scoped(RTAB), rows=rankTable(ms), box=$("rank-list"), n=ms.length, sl=RTAB&&salaById(RTAB);
+  $("rank-reset").hidden=!n; $("rank-reset").textContent=sl?"Zerar ranking desta sala":"Zerar ranking";
+  $("rank-lede").textContent=(sl?`Só as partidas da sala ${sl.name}. `:salas.length?"Todas as partidas deste aparelho, de todas as salas. ":"")+(n?`${n} ${n===1?"partida registrada":"partidas registradas"}. Empate no topo conta vitória para todos que empataram.`:"Vitórias de cada jogador salvo. Empate no topo conta vitória para todos que empataram.");
   if(!rows.length){ box.innerHTML=`<div class="rank-empty"><b>Ninguém no pódio ainda</b>Jogue uma partida até o fim e as vitórias aparecem aqui.</div>`; return; }
   const lead=leaderId(rows); let pos=0,last=null;
   box.innerHTML=rows.map((t,i)=>{ if(t.wins!==last){pos=i+1;last=t.wins}
@@ -2991,18 +3124,21 @@ function renderRank(){
         <div class="rk-sub"><span>${t.games} ${t.games===1?"partida":"partidas"} · ${t.pct}%</span><span class="rk-bar" aria-hidden="true"><i style="width:${t.pct}%"></i></span></div></div>
       <div class="rk-w">${t.wins}<small>${t.wins===1?"vitória":"vitórias"}</small></div></div>`; }).join("");
 }
-function openRank(){ renderRank(); show("s-rank"); }
+function openRank(){ RTAB=SALA; renderRank(); show("s-rank"); }
 $("go-rank").onclick=()=>{ sfx.click(); openRank(); };
 $("f-go-rank").onclick=()=>{ sfx.click(); openRank(); };
-$("rank-play").onclick=()=>{ ac(); sfx.click(); renderPlayers(); show("s-players"); };
-$("rank-reset").onclick=()=>openO("o-confirm");
+$("rank-play").onclick=()=>{ ac(); sfx.click(); openSalas(); };
+$("rank-reset").onclick=()=>{ const sl=RTAB&&salaById(RTAB);
+  $("cf-title").textContent=sl?`Zerar a sala ${sl.name}?`:"Zerar o ranking?";
+  $("cf-text").textContent=sl?"Apaga as partidas desta sala. As outras salas continuam, e essas partidas saem também do ranking geral.":"Apaga o histórico de partidas deste aparelho, de todas as salas. Os jogadores e as salas continuam.";
+  openO("o-confirm"); };
 $("cf-cancel").onclick=()=>closeO("o-confirm");
 $("o-confirm").onclick=e=>{ if(e.target.id==="o-confirm") closeO("o-confirm"); };
-$("cf-ok").onclick=()=>{ store.set("matches",[]); closeO("o-confirm"); sfx.click(); renderRank(); toast("Ranking zerado"); };
+$("cf-ok").onclick=()=>{ store.set("matches",RTAB?getMatches().filter(m=>m.salaId!==RTAB):[]); closeO("o-confirm"); sfx.click(); renderRank(); toast("Ranking zerado"); };
 
 
 /* ================= NOVO TEMA e TROCAR PERGUNTA =================
-   Novo tema: antes de abrir a primeira palavra, troca a pergunta por outra de um tema diferente e gira a roleta de novo.
+   Cada jogador tem 2 trocas na partida, a qualquer momento da sua vez. Novo tema: outro tema, roleta de novo.
    Trocar pergunta: outra do mesmo tema, sem mostrar a resposta. A trocada volta para o monte (não conta como jogada). */
 function drawQuestion(excludeTheme,onlyTheme){
   const inDeck=new Set(S.deck.map(x=>x.id)), used=getUsed();
@@ -3014,22 +3150,39 @@ function drawQuestion(excludeTheme,onlyTheme){
 function syncGroupBtns(){
   const nt=$("b-newtheme"); if(!nt) return;
   const live=$("s-game").classList.contains("on")&&!S.spinning&&(S.phase==="reveal"||S.phase==="think");
-  nt.disabled=!(live&&S.revealed===0&&S.phase==="reveal"); $("b-swap").disabled=!live;
-  if($("b-swap").disabled) resetSwap();
+  const p=S.players[S.turn], left=p&&p.swaps!=null?p.swaps:0, can=live&&left>0;
+  nt.disabled=!can; $("b-swap").disabled=!can; if(!can) resetSwap();
+  document.querySelectorAll(".g-act .g-badge").forEach(b=>b.textContent=left);
+  const why=!p?"":left?`${p.name}: ${left} ${left===1?"troca":"trocas"} na partida`:`${p.name} já usou as 2 trocas`;
+  nt.title=why?`Novo tema · ${why}`:"Novo tema"; $("b-swap").title=why?`Trocar pergunta do mesmo tema · ${why}`:"Trocar pergunta";
+}
+const SWAPS=2, GB={"b-newtheme":"Novo tema","b-swap":"Trocar pergunta"};
+function resetGB(b){ clearTimeout(b._t); b.classList.remove("confirm"); b.querySelector("span").textContent=GB[b.id]; }
+function resetSwap(){ resetGB($("b-swap")); resetGB($("b-newtheme")); }
+/* já abriram palavras? pede um segundo toque (perde o que foi aberto) */
+function needConfirm(b,label,mob){
+  if(S.revealed===0||b.classList.contains("confirm")) return false;
+  resetSwap(); b.classList.add("confirm"); b.querySelector("span").textContent=label; sfx.click();
+  if(!mqWide.matches) toast(mob); clearTimeout(b._t); b._t=setTimeout(()=>resetGB(b),3000); return true;
+}
+/* gasta a troca de quem está na vez; a vez continua com ele na pergunta nova */
+function useSwap(q,quick,txt){
+  const p=S.players[S.turn]; p.swaps--; resetSwap(); stopTimer(); sfx.click();
+  S.extra=false; S.deck[S.qi]=q; S.quickSpin=quick; S.keepTurn=S.turn; loadQuestion();
+  toast(`${txt} · ${p.swaps?`${p.name} ainda tem ${p.swaps} ${p.swaps===1?"troca":"trocas"}`:`${p.name} usou as 2 trocas`}`);
 }
 $("b-newtheme").onclick=()=>{
-  if($("b-newtheme").disabled) return;
+  const b=$("b-newtheme"); if(b.disabled) return;
   if(!S.random&&S.themes.size<2){ toast("Só tem um tema escolhido nesta partida"); return; }
-  const q=drawQuestion(S.deck[S.qi].theme.id); if(!q){ toast("Não há outra pergunta disponível"); return; }
-  sfx.click(); S.deck[S.qi]=q; loadQuestion();
+  if(needConfirm(b,"Trocar?","Toque de novo para sortear outro tema")) return;
+  const q=drawQuestion(S.deck[S.qi].theme.id); if(!q){ resetSwap(); toast("Não há outra pergunta disponível"); return; }
+  useSwap(q,false,"Tema novo");
 };
-function resetSwap(){ const b=$("b-swap"); clearTimeout(b._t); b.classList.remove("confirm"); b.querySelector("span").textContent="Trocar pergunta"; }
 $("b-swap").onclick=()=>{
   const b=$("b-swap"); if(b.disabled) return;
-  if(S.revealed>0&&!b.classList.contains("confirm")){ b.classList.add("confirm"); b.querySelector("span").textContent="Trocar?"; sfx.click(); if(!mqWide.matches) toast("Toque de novo para trocar a pergunta"); clearTimeout(b._t); b._t=setTimeout(resetSwap,3000); return; }
-  resetSwap();
-  const q=drawQuestion(null,S.deck[S.qi].theme.id); if(!q){ toast("Não há outra pergunta deste tema agora"); return; }
-  stopTimer(); sfx.click(); S.deck[S.qi]=q; S.quickSpin=true; loadQuestion(); toast("Pergunta trocada, mesmo tema");
+  if(needConfirm(b,"Trocar?","Toque de novo para trocar a pergunta")) return;
+  const q=drawQuestion(null,S.deck[S.qi].theme.id); if(!q){ resetSwap(); toast("Não há outra pergunta deste tema agora"); return; }
+  useSwap(q,true,"Pergunta trocada");
 };
 
 /* ---------- ficha: palavra extra (a ampulheta continua correndo: decidir faz parte do tempo) ---------- */
@@ -3055,11 +3208,12 @@ function finish(){
   const res=saveMatch(), fr=$("f-rank");
   if(!res){ fr.innerHTML=top===0?"Partida sem pontos não entra no ranking.":""; }
   else{
-    const rows=rankTable(), lead=res.after, lr=lead&&rows.find(r=>r.id===lead);
+    const rows=rankTable(scoped()), lead=res.after, lr=lead&&rows.find(r=>r.id===lead);
     const wn=res.match.winners.map(id=>rows.find(r=>r.id===id)).filter(Boolean);
     if(lead&&lead!==res.before) fr.innerHTML=`<span class="new-lead">Novo líder</span><b>${lr.r.emoji} ${esc(lr.r.name)}</b> assume o ranking com ${lr.wins} ${lr.wins===1?"vitória":"vitórias"}`;
     else if(wn.length===1) fr.innerHTML=`<b>${wn[0].r.emoji} ${esc(wn[0].r.name)}</b> chega a ${wn[0].wins} ${wn[0].wins===1?"vitória":"vitórias"}${lead===wn[0].id?" e segue na liderança":""}`;
     else fr.innerHTML=`Vitória dividida: ${wn.map(w=>`<b>${w.r.emoji} ${esc(w.r.name)}</b>`).join(" e ")} somam mais uma`;
+    const sl=S.sala&&salaById(S.sala); if(sl) fr.innerHTML=`<span class="fr-sala">Sala ${esc(sl.name)}</span>`+fr.innerHTML;
   }
   show("s-final"); sfx.win(); if(top>0) setTimeout(()=>confetti(240),1000);
 }
