@@ -2422,16 +2422,18 @@ function buildDeck(){
   let fresh=pool.filter(p=>!used.has(p.id));
   const need=Math.min(S.total,pool.length);
   if(fresh.length<need) fresh=fresh.concat(shuffle(pool.filter(p=>used.has(p.id))).slice(0,need-fresh.length));
-  let deck;
-  if(S.random){
-    const by={}; shuffle(fresh).forEach(p=>(by[p.theme.id]=by[p.theme.id]||[]).push(p));
-    deck=[]; let last=null;
-    while(deck.length<S.total){
-      const ids=Object.keys(by).filter(k=>by[k].length); if(!ids.length) break;
-      let c=ids.filter(k=>k!==last); if(!c.length) c=ids;
-      const k=c[Math.floor(Math.random()*c.length)]; deck.push(by[k].pop()); last=k;
-    }
-  } else deck=shuffle(fresh).slice(0,Math.min(S.total,fresh.length));
+  /* ciclo de temas: um tema só repete depois que todos os escolhidos passaram (revela:cycle, segue entre partidas) */
+  const by={}; shuffle(fresh).forEach(p=>(by[p.theme.id]=by[p.theme.id]||[]).push(p));
+  const ids0=Object.keys(by), cycle=new Set(store.get("cycle",[]).filter(id=>ids0.includes(id)));
+  const deck=[]; let last=store.get("cycleLast",null);
+  while(deck.length<S.total){
+    const ids=Object.keys(by).filter(k=>by[k].length); if(!ids.length) break;
+    let c=ids.filter(k=>!cycle.has(k));
+    if(!c.length){ cycle.clear(); c=ids; }
+    if(c.length>1) c=c.filter(k=>k!==last);
+    const k=c[Math.floor(Math.random()*c.length)]; deck.push(by[k].pop()); cycle.add(k); last=k;
+  }
+  store.set("cycle",[...cycle]); store.set("cycleLast",last);
   return deck;
 }
 function tokenize(q){
@@ -3164,7 +3166,11 @@ $("cf-ok").onclick=()=>{ store.set("matches",RTAB?getMatches().filter(m=>m.salaI
    Trocar pergunta: outra do mesmo tema, sem mostrar a resposta. A trocada volta para o monte (não conta como jogada). */
 function drawQuestion(excludeTheme,onlyTheme){
   const inDeck=new Set(S.deck.map(x=>x.id)), used=getUsed();
-  const themes=THEMES.filter(t=>onlyTheme?t.id===onlyTheme:((S.random||S.themes.has(t.id))&&t.id!==excludeTheme)); refreshExhausted(themes,used);
+  let themes=THEMES.filter(t=>onlyTheme?t.id===onlyTheme:((S.random||S.themes.has(t.id))&&t.id!==excludeTheme));
+  if(!onlyTheme){ const ahead=new Set(S.deck.slice(S.qi).map(x=>x.theme.id)), cyc=new Set(store.get("cycle",[]));
+    const a=themes.filter(t=>!ahead.has(t.id)&&!cyc.has(t.id)), b=themes.filter(t=>!ahead.has(t.id));
+    themes=a.length?a:b.length?b:themes; }
+  refreshExhausted(themes,used);
   const pool=[]; themes.forEach(t=>t.qs.forEach((q,i)=>pool.push({id:t.id+":"+i,theme:t,q:q[0],a:q[1]})));
   let fresh=pool.filter(p=>!inDeck.has(p.id)&&!used.has(p.id)); if(!fresh.length) fresh=pool.filter(p=>!inDeck.has(p.id)); if(!fresh.length) return null;
   return fresh[Math.floor(Math.random()*fresh.length)];
@@ -3198,6 +3204,7 @@ $("b-newtheme").onclick=()=>{
   if(!S.random&&S.themes.size<2){ toast("Só tem um tema escolhido nesta partida"); return; }
   if(needConfirm(b,"Trocar?","Toque de novo para sortear outro tema")) return;
   const q=drawQuestion(S.deck[S.qi].theme.id); if(!q){ resetSwap(); toast("Não há outra pergunta disponível"); return; }
+  { const c=new Set(store.get("cycle",[])); c.add(q.theme.id); store.set("cycle",[...c]); }
   useSwap(q,false,"Tema novo");
 };
 $("b-swap").onclick=()=>{
