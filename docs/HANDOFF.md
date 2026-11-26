@@ -27,7 +27,8 @@ Quem acerta leva 1 ponto por palavra que ainda estava escondida. Pontuação (v�
   - Acertou: fanfarra + confete; o resultado aparece na bancada, com o telão inteiro aberto.
   - Respostas que não passaram aparecem no resultado com botão "Aceitar +N" (decisão do grupo).
   - Dica estilo forca: 1 por jogador na partida. Quem usa escolhe uma CONSOANTE no alfabeto do telão (pediu, tem que escolher; se o tempo acabar, perde a dica). Tem: a letra aparece no lugar dela (casas invisíveis do mesmo tamanho, sem tracinhos e sem contagem de letras/palavras) e o telão pisca verde. Não tem: pisca no vermelho de erro, som de erro, letra riscada. Dicas de outros jogadores na mesma pergunta se somam; acento não importa. Código: `ABC`, `foldL`, `hintMask`, `renderHint`, `pickLetter`, `cancelHint`, `S.hintPick/hintLetters/hintTried`.
-  - Errar a resposta custa 1 ponto (`WRONG_PEN`); "Aceitar" no resultado devolve.
+  - Errar a resposta custa 3 pontos (`WRONG_PEN`). "Aceitar" no resultado devolve o castigo; se a pessoa já pontuou nesta pergunta, fica com o MAIOR valor (recebe só a diferença, `S.credit`, `attemptGain`, `renderAttempts`); outro jogador recebe os pontos da resposta aceita.
+  - Correção: número por extenso e algarismo valem igual (`NUMA` em `norm`: "tres" = "3").
   - Reportar problema: ícone de bandeira no topo e link no resultado; motivos + comentário. Hoje grava no banco do artefato do claude.ai (`window.claude.use("db")`) ou, fora dele, no `localStorage` (`revela:reports`).
   - Menu: pular pergunta, encerrar e ver placar.
 - **Final:** pódio animado (2º, 1º, 3º) e lista para 4º e 5º; linha do ranking ("Novo líder…" / "chega a N vitórias") e botão "Ver ranking".
@@ -133,3 +134,4 @@ Ideias para depois: **Modo TV / cada um no seu celular** (telão numa tela, cada
 - Ampulheta mais viva: tampas lilás com brilho, areia rosa com emissive, vidro mais presente, quase acesa mesmo parada; segundos grandes (92 px no computador, 30 px no celular).
 - Testado e descartado: pontinhos com o tamanho da palavra embaixo do número (tirava o suspense).
 - Salvamento: os dados ficam só no navegador (localStorage), ainda sem banco online. Ao abrir, um teste de gravação mostra a faixa `#save-warn` se o navegador bloquear (aba anônima, navegador de app). No fim da partida, `saveMatch` confere se gravou (`res.saved`) e o final mostra "✓ Salvo no ranking…" ou "Não foi possível salvar…". `askPersist()` pede `navigator.storage.persist()`. `store.set` agora devolve true/false. Próximo passo de verdade: Supabase (ranking, salas e jogadores em qualquer aparelho).
+- Partida salva a cada pergunta (`S.matchId`, `saveProgress` no "Próxima pergunta", `upsertMatch`): se fecharem no meio, a partida já conta no ranking com o placar até ali, desde que tenha passado da metade das perguntas e alguém tenha ponto. No final o mesmo registro é atualizado (`played`/`total` no registro).

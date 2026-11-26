@@ -1233,7 +1233,7 @@ body.in-game .theme-fab{display:none}
   <div class="eyebrow">Ajuda</div>
   <h2 id="help-title">Como jogar</h2>
   <div class="help-list">
-    <div><span class="hi">🎯</span><b>Como pontuar</b><p>Quem acerta leva 1 ponto por palavra que ainda estava escondida. Errar a resposta custa 1 ponto.</p></div>
+    <div><span class="hi">🎯</span><b>Como pontuar</b><p>Quem acerta leva 1 ponto por palavra que ainda estava escondida. Errar a resposta custa 3 pontos.</p></div>
     <div id="help-8"><span class="hi">🎱</span><b>A palavra 8</b><p>Só abre depois que todos jogarem uma vez. Quem abre e acerta ganha +8; se errar ou passar, perde 8 e os outros ganham 8.</p></div>
     <div id="help-fichas" hidden><span class="hi">🪙</span><b>Fichas (modo Rápido)</b><p>Cada jogador tem fichas para a partida toda. Depois de abrir sua palavra, gaste 1 ficha para abrir mais uma (só 1 por vez).</p></div>
     <div><span class="hi">🙋</span><b>Eu sei!</b><p>Uma vez por partida, antes de quem está na vez responder: acertou leva metade dos pontos; errou perde 8.</p></div>
@@ -2056,7 +2056,7 @@ Object.assign(ALIASES,{
   "My Hero Academia":["boku no hero","boku no hero academia","my hero"], "Super Campeões":["captain tsubasa","tsubasa"],
   "Totoro":["meu amigo totoro"], "Avatar: A Lenda de Aang":["avatar","a lenda de aang"],
   "Coragem, o Cão Covarde":["coragem","courage"], "Dexter":["o laboratorio de dexter","laboratorio de dexter"],
-  "Digimon":["digimon adventure"], "Três Espiãs Demais":["totally spies","3 espias demais"], "Kim Possible":["kim"],
+  "Digimon":["digimon adventure"], "Três Espiãs Demais":["Três Espiãs","3 Espiãs","totally spies","3 espias demais"], "Kim Possible":["kim"],
   "O Máskara":["mascara","o mascara","the mask"], "Mansão Foster":["a mansao foster para amigos imaginarios","fosters"],
   "Danny Phantom":["danny fantasma"], "Jimmy Neutron":["jimmy"], "Os Padrinhos Mágicos":["fairly oddparents"],
   "Yu-Gi-Oh!":["yugioh"], "Jovens Titãs":["teen titans"], "Hey Arnold!":["arnold"],
@@ -2525,7 +2525,7 @@ function startGame(){
   S.players.forEach(p=>{p.score=0;p.hint=hintsOn();p.oos=true;p.fichas=S.fast?fichasN():0;p.swaps=SWAPS});
   $("s-game").classList.toggle("fast",S.fast);
   $("s-game").classList.toggle("hard",hard());
-  S.deck=buildDeck(); S.qi=0; S.t0=Date.now(); S.turnKey=null; S.indPos=null;
+  S.deck=buildDeck(); S.qi=0; S.t0=Date.now(); S.matchId=uid(); S.turnKey=null; S.indPos=null;
   show("s-game"); loadQuestion();
 }
 $("start").onclick=()=>{ac();sfx.right();startGame()};
@@ -2876,7 +2876,7 @@ function showTurn(p,hint,ev,animate){
 }
 const BALL8=`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#14111d"/><circle cx="32" cy="29.5" r="14.5" fill="#fff"/><g fill="none" stroke="#120C22" stroke-width="3.4"><circle cx="32" cy="24.4" r="4.2"/><circle cx="32" cy="33.9" r="5.3"/></g><ellipse cx="21" cy="14" rx="7" ry="3.4" fill="#fff" opacity=".28" transform="rotate(-32 21 14)"/></svg>`;
 const val8=()=>S.gold?16:8;
-const WRONG_PEN=1; /* chute errado custa 1 ponto (devolvido se o grupo aceitar a resposta) */
+const WRONG_PEN=3; /* chute errado custa 1 ponto (devolvido se o grupo aceitar a resposta) */
 const EIGHT_ON=false; /* palavra 8 desligada por enquanto: o código continua aqui para voltar depois */
 function eightLocked(){ return S.turnsTaken<S.players.length; }
 function reveal(i){
@@ -2963,9 +2963,11 @@ function updTimer(){
 $("b-pass").onclick=()=>{ if(S.phase!=="think")return; stopTimer(); sfx.click(); S.phase="wait"; if(eightPenalty(()=>nextTurn("pass"))){ sfx.wrong(); renderHUD(); } else nextTurn("pass"); };
 /* ---------- correção da resposta ---------- */
 const LEAD=/^(eu acho que|acho que|e|eh|o|a|os|as|um|uma|the)\s+/;
+const NUMA={dois:"2",duas:"2",tres:"3",quatro:"4",cinco:"5",seis:"6",sete:"7",oito:"8",nove:"9",dez:"10",onze:"11",doze:"12",treze:"13",quatorze:"14",catorze:"14",quinze:"15",dezesseis:"16",dezessete:"17",dezoito:"18",dezenove:"19",vinte:"20",cem:"100",mil:"1000"};
 function norm(s){
   let t=String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
     .replace(/[·\-_/.'’:,;!?"“”()]/g," ").replace(/[^a-z0-9% ]/g,"").replace(/\s+/g," ").trim();
+  t=t.split(" ").map(w=>NUMA[w]||w).join(" ");
   let prev; do{prev=t;t=t.replace(LEAD,"")}while(t!==prev);
   return t.replace(/ /g,"");
 }
@@ -3127,14 +3129,22 @@ function endQuestion(winner){
   $("r-answer").textContent=d.a;
   $("r-q").textContent=d.q;
   if(winner!==null) $("r-kicker").textContent+=` escrevendo “${S.lastGuess}”`;
-  const box=$("r-attempts");
-  box.innerHTML=S.attempts.length?`<div class="lbl">Respostas que não passaram. Se o grupo concordar, dá para aceitar:</div>`+S.attempts.map((a,i)=>{const p=S.players[a.pi];
-    return `<div class="attempt"><span class="e">${p.emoji}</span><span class="txt"><b>${esc(p.name)}</b><br>${esc(a.text)}</span>${a.pts>0?`<button data-acc="${i}">Aceitar +${a.pts+(a.eight?2*a.eight:0)+(a.oos||0)+(a.pen||0)}</button>`:""}</div>`}).join(""):"";
-  box.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>{const a=S.attempts[+b.dataset.acc];S.players[a.pi].score+=a.pts;
-    if(a.eight) S.players.forEach((q,j)=>{ q.score+= j===a.pi?2*a.eight:-a.eight; });
-    if(a.oos) S.players[a.pi].score+=a.oos; if(a.pen) S.players[a.pi].score+=a.pen;b.disabled=true;b.textContent="Aceita ✓";sfx.pop();renderHUD();});
+  S.credit={}; if(winner!==null) S.credit[winner]=S.winPts!=null?S.winPts:worth();
+  renderAttempts();
   $("r-next").textContent=S.qi+1>=S.deck.length?"Ver placar final":"Próxima pergunta";
   setTimeout(()=>{ openO("o-result"); $("s-game").classList.add("show-result"); },winner!==null?1100:700);
+}
+/* respostas que não passaram: o grupo pode aceitar.
+   Mesma pessoa que já pontuou nesta pergunta: fica com o maior valor (recebe só a diferença). O castigo do erro volta. */
+function attemptGain(a){ return {base:Math.max(0,a.pts+(a.eight?2*a.eight:0)-(S.credit[a.pi]||0)), refund:(a.pen||0)+(a.oos||0)}; }
+function renderAttempts(){
+  const box=$("r-attempts");
+  box.innerHTML=S.attempts.length?`<div class="lbl">Respostas que não passaram. Se o grupo concordar, dá para aceitar:</div>`+S.attempts.map((a,i)=>{ const p=S.players[a.pi], g=attemptGain(a);
+    const btn=a.done?`<button disabled>Aceita ✓</button>`:a.pts>0?`<button data-acc="${i}" title="${g.base?"":"Já pontuou mais nesta pergunta; devolve só o castigo do erro"}">Aceitar +${g.base+g.refund}</button>`:"";
+    return `<div class="attempt"><span class="e">${p.emoji}</span><span class="txt"><b>${esc(p.name)}</b><br>${esc(a.text)}</span>${btn}</div>`; }).join(""):"";
+  box.querySelectorAll("[data-acc]").forEach(b=>b.onclick=()=>{ const a=S.attempts[+b.dataset.acc]; if(a.done) return; const g=attemptGain(a);
+    S.players[a.pi].score+=g.base+g.refund; if(a.eight) S.players.forEach((q,j)=>{ if(j!==a.pi) q.score-=a.eight; });
+    S.credit[a.pi]=(S.credit[a.pi]||0)+g.base; a.done=true; sfx.pop(); renderAttempts(); renderHUD(); });
 }
 function goldIntro(){
   const g=$("gold-intro"); clearTimeout(g._t);
@@ -3143,7 +3153,7 @@ function goldIntro(){
   g.onclick=close; g._t=setTimeout(close,1900);
 }
 $("r-next").onclick=()=>{ closeO("o-result"); $("s-game").classList.remove("show-result"); sfx.click();
-  S.qi++; S.qi>=S.deck.length?finish():loadQuestion(); };
+  saveProgress(); S.qi++; S.qi>=S.deck.length?finish():loadQuestion(); };
 
 /* ---------- menu ---------- */
 $("g-menu").onclick=()=>openO("o-menu");
@@ -3231,11 +3241,17 @@ function rankTable(matches=getMatches()){
     .sort((a,b)=>b.wins-a.wins||b.pct-a.pct||b.games-a.games||a.r.name.localeCompare(b.r.name));
 }
 function leaderId(rows){ return rows.length&&rows[0].wins>0&&!(rows[1]&&rows[1].wins===rows[0].wins)?rows[0].id:null; }
+/* a mesma partida (S.matchId) é gravada a cada pergunta e atualizada no final */
+function buildMatch(played){ const top=Math.max(...S.players.map(p=>p.score));
+  return {id:S.matchId||uid(),at:Date.now(),durMs:S.t0?Date.now()-S.t0:null,salaId:S.sala||null,played,total:S.deck.length,players:S.players.map(p=>({id:p.id,name:p.name,emoji:p.emoji,score:p.score})),winners:S.players.filter(p=>p.score===top).map(p=>p.id)}; }
+function upsertMatch(m){ const all=getMatches().filter(x=>x.id!==m.id); all.push(m); store.set("matches",all.slice(-500)); }
+function dropMatch(){ if(S.matchId) store.set("matches",getMatches().filter(x=>x.id!==S.matchId)); }
+function saveProgress(){ const played=S.qi+1, top=Math.max(...S.players.map(p=>p.score));
+  if(top>0&&played>=Math.ceil(S.deck.length/2)) upsertMatch(buildMatch(played)); }
 function saveMatch(){
-  const top=Math.max(...S.players.map(p=>p.score)); if(top<=0) return null;
-  const before=leaderId(rankTable(scoped()));
-  const m={id:uid(),at:Date.now(),durMs:S.t0?Date.now()-S.t0:null,salaId:S.sala||null,players:S.players.map(p=>({id:p.id,name:p.name,emoji:p.emoji,score:p.score})),winners:S.players.filter(p=>p.score===top).map(p=>p.id)};
-  const all=getMatches(); all.push(m); store.set("matches",all.slice(-500));
+  const top=Math.max(...S.players.map(p=>p.score)); if(top<=0){ dropMatch(); return null; }
+  const before=leaderId(rankTable(scoped().filter(x=>x.id!==S.matchId)));
+  const m=buildMatch(S.qi>=S.deck.length?S.deck.length:S.qi+1); upsertMatch(m);
   const saved=getMatches().some(x=>x.id===m.id); askPersist();
   return {match:m,before,after:leaderId(rankTable(scoped())),saved};
 }
