@@ -922,6 +922,15 @@ body.in-game .theme-fab{display:none}
 .hint-box .hint-used{margin-top:0}
 .hint-box .hint-abc{margin-top:4px}
 
+/* aviso de salvamento */
+.save-warn{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:120;width:min(640px,calc(100% - 32px));background:var(--bad-soft);color:var(--bad);border-radius:16px;padding:12px 44px 12px 16px;font-size:14px;line-height:1.4;box-shadow:var(--shadow-2),0 0 0 1.5px var(--bad) inset}
+.save-warn[hidden]{display:none}
+.save-warn b{display:block;font-weight:800}
+.save-warn button{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:8px;color:var(--bad);font-weight:800}
+.save-ok,.save-bad{display:block;margin-top:8px;font-size:13px;font-weight:700}
+.save-ok{color:var(--ok)}
+.save-bad{color:var(--bad)}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -1231,7 +1240,7 @@ body.in-game .theme-fab{display:none}
     <div><span class="hi">★</span><b>Pergunta de ouro</b><p>A última pergunta da partida vale o dobro.</p></div>
     <div><span class="hi">💡</span><b>Dica</b><p>Uma por jogador na partida, como na forca: escolha uma consoante (pediu, tem que escolher). Se a resposta tiver, ela aparece no lugar dela para todos; se não tiver, fica marcada em vermelho.</p></div>
     <div><span class="hi">🔄</span><b>Trocas</b><p>Cada jogador tem 2 trocas na partida, para usar na sua vez: Novo tema ou Trocar pergunta. A vez continua com quem trocou.</p></div>
-    <div><span class="hi">⏳</span><b>Escolher a palavra</b><p>Na sua vez, você tem 12 segundos para escolher uma palavra. Se não escolher, abre uma aleatória e começa o tempo de responder.</p></div>
+    <div><span class="hi">⏳</span><b>Escolher a palavra</b><p>Na sua vez, você tem 20 segundos para escolher uma palavra. Se não escolher, abre uma aleatória e começa o tempo de responder.</p></div>
     <div><span class="hi">⌨️</span><b>Atalhos</b><p>No teclado, digite o número da palavra e ela abre.</p></div>
   </div>
   <div class="row" style="grid-template-columns:1fr"><button class="btn btn-primary" id="help-close">Voltar ao jogo</button></div>
@@ -1280,6 +1289,8 @@ body.in-game .theme-fab{display:none}
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
+<div class="save-warn" id="save-warn" role="alert" hidden><b>Este navegador não está salvando.</b> Ranking, jogadores e salas somem ao fechar. Abra o jogo numa aba normal do Chrome ou Safari, fora do WhatsApp e do Instagram.<button type="button" id="save-warn-x" aria-label="Fechar aviso">✕</button></div>
+<script>(function(){ let ok=false; try{ const k="revela:__t", v=String(Date.now()); localStorage.setItem(k,v); ok=localStorage.getItem(k)===v; localStorage.removeItem(k); }catch(e){} if(!ok){ document.getElementById("save-warn").hidden=false; } document.getElementById("save-warn-x").onclick=()=>{ document.getElementById("save-warn").hidden=true; }; })();</script>
 
 <script>
 
@@ -2057,7 +2068,7 @@ Object.assign(ALIASES,{
 /* ================= ESTADO ================= */
 const store = {
   get(k,d){try{const v=localStorage.getItem("revela:"+k);return v?JSON.parse(v):d}catch(e){return d}},
-  set(k,v){try{localStorage.setItem("revela:"+k,JSON.stringify(v))}catch(e){}}
+  set(k,v){try{localStorage.setItem("revela:"+k,JSON.stringify(v));return true}catch(e){return false}}
 };
 const S = {
   players: [],
@@ -2912,7 +2923,7 @@ function setSand(f){
   b.setAttribute("y",69.5-h); b.setAttribute("height",h);
 }
 /* ---------- escolha da palavra: 10 s na ampulheta; acabou o tempo, abre uma palavra aleatória ---------- */
-const PICK_SEC=12;
+const PICK_SEC=20;
 function startPick(delay=0){
   clearTimeout(S.pickT);
   S.pickT=setTimeout(()=>{
@@ -3208,6 +3219,9 @@ $("go-players").onclick=()=>{
   sfx.click(); renderPlayers(); show("s-players");
 };
 function fmtDur(ms){ const m=Math.max(1,Math.round(ms/60000)); return m<60?`${m} min`:`${Math.floor(m/60)} h ${m%60} min`; }
+/* ---------- o navegador está salvando? (aba anônima e navegador de app bloqueiam ou apagam) ---------- */
+function storageOK(){ try{ const k="revela:__t", v=String(Date.now()); localStorage.setItem(k,v); const ok=localStorage.getItem(k)===v; localStorage.removeItem(k); return ok; }catch(e){ return false; } }
+function askPersist(){ try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persisted().then(p=>{ if(!p) navigator.storage.persist().catch(()=>{}); }).catch(()=>{}); }catch(e){} }
 function getMatches(){ const m=store.get("matches",[]); return Array.isArray(m)?m:[]; }
 function rankTable(matches=getMatches()){
   const T=new Map();
@@ -3222,7 +3236,8 @@ function saveMatch(){
   const before=leaderId(rankTable(scoped()));
   const m={id:uid(),at:Date.now(),durMs:S.t0?Date.now()-S.t0:null,salaId:S.sala||null,players:S.players.map(p=>({id:p.id,name:p.name,emoji:p.emoji,score:p.score})),winners:S.players.filter(p=>p.score===top).map(p=>p.id)};
   const all=getMatches(); all.push(m); store.set("matches",all.slice(-500));
-  return {match:m,before,after:leaderId(rankTable(scoped()))};
+  const saved=getMatches().some(x=>x.id===m.id); askPersist();
+  return {match:m,before,after:leaderId(rankTable(scoped())),saved};
 }
 function renderRank(){
   const salas=getSalas(); if(RTAB&&!salas.some(x=>x.id===RTAB)) RTAB="";
@@ -3329,6 +3344,7 @@ function finish(){
   $("podium").innerHTML=ranked.slice(3).map((p,j)=>`<div class="rank"><span class="pos">${posd[j+3]}</span><span class="e">${p.emoji}</span><span class="n">${esc(p.name)}</span><span class="p">${p.score}</span></div>`).join("");
   const res=saveMatch(), fr=$("f-rank");
   if(!res){ fr.innerHTML=top===0?"Partida sem pontos não entra no ranking.":""; }
+  else if(!res.saved){ fr.innerHTML=`<span class="save-bad">Não foi possível salvar esta partida: este navegador está bloqueando (aba anônima ou link aberto dentro de um app)</span>`; }
   else{
     const rows=rankTable(scoped()), lead=res.after, lr=lead&&rows.find(r=>r.id===lead);
     const wn=res.match.winners.map(id=>rows.find(r=>r.id===id)).filter(Boolean);
@@ -3336,6 +3352,7 @@ function finish(){
     else if(wn.length===1) fr.innerHTML=`<b>${wn[0].r.emoji} ${esc(wn[0].r.name)}</b> chega a ${wn[0].wins} ${wn[0].wins===1?"vitória":"vitórias"}${lead===wn[0].id?" e segue na liderança":""}`;
     else fr.innerHTML=`Vitória dividida: ${wn.map(w=>`<b>${w.r.emoji} ${esc(w.r.name)}</b>`).join(" e ")} somam mais uma`;
     const sl=S.sala&&salaById(S.sala); if(sl) fr.innerHTML=`<span class="fr-sala">Sala ${esc(sl.name)}</span>`+fr.innerHTML;
+    fr.innerHTML+=`<span class="save-ok">✓ Salvo no ranking${sl?` da sala ${esc(sl.name)}`:""} neste aparelho</span>`;
   }
   show("s-final"); sfx.win(); if(top>0) setTimeout(()=>confetti(240),1000);
 }
